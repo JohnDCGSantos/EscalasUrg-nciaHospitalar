@@ -94,9 +94,16 @@ router.post('/criar', async (req, res) => {
 
     // Salve a nova escala no banco de dados
     await novaEscala.save()
-
+    return res.render('escalas/visualizar', {
+      success: {
+        message: 'Escala criada com sucesso!',
+        numDias: numDias,
+        numSemanas: numSemanas,
+      },
+      escala: novaEscala,
+    })
     // Redirecione para a página dos médicos
-    res.redirect('/doctors')
+    //res.redirect('/doctors')
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Erro ao gerar a escala' })

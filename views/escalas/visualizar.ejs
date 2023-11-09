@@ -3,10 +3,75 @@
 
 <head>
   <title>Visualizar Escala</title>
-</head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      text-align: center;
+    }
+
+    h1 {
+      color: #008000;
+    }
+
+    .success-message {
+      background-color: #dff0d8;
+      border: 1px solid #d6e9c6;
+      color: #3c763d;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+  <!DOCTYPE html>
+  <html>
+
+  <head>
+    <title>Visualizar Escala</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        text-align: center;
+      }
+
+      h1 {
+        color: #008000;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      li {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
 
 <body>
   <h1>Detalhes da Escala</h1>
+
   <p>Data de Início: <%= escala.dataInicio.toDateString() %></p>
   <p>Data de Fim: <%= escala.dataFim.toDateString() %></p>
   <h2>Medicos na Escala</h2>
