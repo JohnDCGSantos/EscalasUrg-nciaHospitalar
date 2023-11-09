@@ -17,8 +17,8 @@ router.get('/criar', async (req, res) => {
   }
 })
 let medicosSelecionados = []
-let medicosSemana = []
-let semanaAtual = 0
+///let medicosSemana = []
+//let semanaAtual = 0
 
 // Rota para criar uma nova escala
 // Rota para criar uma nova escala
