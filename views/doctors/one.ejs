@@ -1,0 +1,27 @@
+<!-- views/detalhes-medico.ejs - Página de Detalhes do Médico -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Detalhes do Médico</title>
+</head>
+
+<body>
+  <h1>Detalhes do Médico: <%= medico.nome %></h1>
+  <h2>Períodos de Férias:</h2>
+  <ul>
+    <% medico.historicoFerias.forEach(ferias => { %>
+    <li>Data de Início: <%= ferias.dataInicio %></li>
+    <li>Data de Término: <%= ferias.dataFim %></li>
+    <% }); %>
+  </ul>
+
+  <ul>
+    <% medico.historicoFerias %>
+    </li>
+
+  </ul>
+  <a href="/doctors">Voltar para a Lista de Médicos</a>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Lista de Médicos</title>
+</head>
+
+<body>
+  <h1>Lista de Médicos</h1>
+
+
+  <% allDocs.forEach(doctor => { %>
+  <li> <a href="/doctors/<%= doctor._id %>"><%= doctor.nome %></a></li>
+  <% }); %>
+  </ul>
+  <a href="/doctors/adicionar">Adicionar Médico</a>
+</body>
+
+</html>

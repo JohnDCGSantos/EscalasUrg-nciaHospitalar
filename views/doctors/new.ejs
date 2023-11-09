@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Adicionar Médico</title>
+</head>
+
+<body>
+  <h1>Adicionar Médico</h1>
+  <form action="/doctors/adicionar" method="post">
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" required>
+    <div id="ferias-container">
+      <!-- Campos de data para o primeiro período de férias -->
+      <div class="ferias-group">
+        <label>Data de Início de Férias:</label>
+        <input type="date" name="historicoFerias[dataInicio][]">
+        <label>Data de Término de Férias:</label>
+        <input type="date" name="historicoFerias[dataFim][]">
+      </div>
+    </div>
+
+    <button type="button" onclick="addFeriasInput()">Adicionar Data de Férias</button>
+    <button type="submit">Adicionar Médico</button>
+  </form>
+
+  <script>
+    let dataIndex = 1;
+
+    function addFeriasInput() {
+      const container = document.getElementById("ferias-container"); //para fazer o appendchild no container addFeriasInput
+
+      const feriasGroup = document.createElement("div");
+      feriasGroup.className = "ferias-group";
+
+      const dataInicioInput = document.createElement("input");
+      dataInicioInput.type = "date";
+      dataInicioInput.name = `historicoFerias[dataInicio][]`;
+      feriasGroup.appendChild(dataInicioInput);
+
+      const dataFimInput = document.createElement("input");
+      dataFimInput.type = "date";
+      dataFimInput.name = `historicoFerias[dataFim][]`;
+      feriasGroup.appendChild(dataFimInput);
+
+      container.appendChild(feriasGroup);
+
+      dataIndex++;
+    }
+  </script>
+</body>
+
+</html>

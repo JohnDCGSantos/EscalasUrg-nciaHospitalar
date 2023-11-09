@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Visualizar Escala</title>
+</head>
+
+<body>
+  <h1>Detalhes da Escala</h1>
+  <p>Data de Início: <%= escala.dataInicio.toDateString() %></p>
+  <p>Data de Fim: <%= escala.dataFim.toDateString() %></p>
+  <h2>Medicos na Escala</h2>
+  <ul>
+    <% escala.medicos.forEach(medico => { %>
+    <li>
+      <strong>Nome do Médico:</strong> <%= medico.nomeMedico %><br>
+      <strong>Data:</strong> <%= medico.dia.toDateString() %><br>
+      <strong>Turno:</strong> <%= medico.turno %><br>
+    </li>
+    <% }); %>
+  </ul>
+  <a href="/escala">Voltar para a lista de escalas</a>
+</body>
+
+</html>

@@ -1,0 +1,10 @@
+<body>
+  <h1>Lista de Escalas</h1>
+
+
+  <% allEscalas.forEach(escala => { %>
+  <li> <a href="/escala/<%= escala._id %>"><%= escala.dataInicio.toDateString() %></a></li>
+  <% }); %>
+  </ul>
+  <a href="/doctors/adicionar">Adicionar Médico</a>
+</body>
