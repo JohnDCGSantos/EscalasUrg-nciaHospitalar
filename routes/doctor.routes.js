@@ -11,6 +11,39 @@ router.get('/', async (req, res, next) => {
 router.get('/adicionar', (req, res, next) => {
   res.render('doctors/new')
 })
+function getDaysArray(startDate, endDate) {
+  return new Promise((resolve, reject) => {
+    try {
+      const daysArray = []
+      let currentDate = new Date(startDate)
+
+      // Loop para cada dia entre startDate e endDate
+      while (currentDate <= endDate) {
+        daysArray.push(new Date(currentDate))
+        currentDate.setDate(currentDate.getDate() + 1)
+      }
+
+      resolve(daysArray)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+async function obterDiasFerias(medico) {
+  const diasFerias = []
+
+  for (const ferias of medico.historicoFerias) {
+    const dataFeriasInicio = new Date(ferias.dataInicio)
+    const dataFeriasFim = new Date(ferias.dataFim)
+
+    const diasFeriasPeriodo = await getDaysArray(dataFeriasInicio, dataFeriasFim)
+    diasFerias.push(...diasFeriasPeriodo)
+  }
+
+  return diasFerias
+}
+
 router.post('/adicionar', async (req, res, next) => {
   try {
     const { nome } = req.body
@@ -35,7 +68,8 @@ router.post('/adicionar', async (req, res, next) => {
     }
 
     const novoMedico = new Doctor({ nome, historicoFerias })
-
+    const diasDeFerias = await obterDiasFerias(novoMedico)
+    novoMedico.diasDeFerias = diasDeFerias
     await novoMedico.save()
 
     res.redirect('/doctors')

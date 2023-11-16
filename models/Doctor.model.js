@@ -19,6 +19,7 @@ const doctorSchema = new Schema(
         },
       },
     ],
+    diasDeFerias: [Date], // Novo campo para armazenar os dias de férias
   },
   {
     timestamps: true, // Adicionar timestamps para `createdAt` e `updatedAt`

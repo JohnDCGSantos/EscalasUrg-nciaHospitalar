@@ -12,15 +12,6 @@ const escalaSchema = new Schema(
       required: true,
     },
 
-    /*medicos: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Doctor', // Referência ao modelo de Doctor (Médico)
-        required: true,
-      },
-    ],
-  },
-  {*/
     medicos: [
       {
         medico: {
@@ -31,6 +22,8 @@ const escalaSchema = new Schema(
         nomeMedico: {
           type: String, // Adicione o campo de nome do médico
         },
+        diasDeFerias: [{ type: Date }],
+
         dia: {
           type: Date,
         },

@@ -16,11 +16,9 @@ router.get('/criar', async (req, res) => {
   }
 })
 
-//let medicosSemana = []
-//let semanaAtual = 0
-
 // Rota para criar uma nova escala
 let medicosSelecionados = []
+
 router.post('/criar', async (req, res) => {
   try {
     const dataInicioString = req.body.dataInicio
@@ -29,11 +27,18 @@ router.post('/criar', async (req, res) => {
     const dataFim = new Date(dataFimString)
 
     medicosSelecionados = req.body.medicos // Atualizar os médicos selecionados
+    console.log('Medicos Selecionados:', medicosSelecionados) // Visualizar a estrutura dos médicos
 
     if (!medicosSelecionados || medicosSelecionados.length < 14) {
       return res.status(400).json({ error: 'Selecione pelo menos 14 médicos para criar a escala.' })
     }
+    const medicoIds = medicosSelecionados.map(medico => medico.split(':')[0])
 
+    const diasDeFeriasPorMedico = {}
+    for (const medicoId of medicoIds) {
+      const medico = await Doctor.findById(medicoId)
+      diasDeFeriasPorMedico[medicoId] = medico.diasDeFerias || []
+    }
     // Calcular as semanas com função calcularSemanas
     const semanas = calcularSemanas(dataInicio, dataFim)
 
@@ -57,7 +62,13 @@ router.post('/criar', async (req, res) => {
       console.log(`Número de dias na semana: ${numDiasSemana}`)
       console.log(`Médicos disponíveis: ${medicosSemana.length}`)
 
-      const escalaSemana = criarEscala(dataInicioSemana, numDiasSemana, medicosSemana)
+      const escalaSemana = criarEscala(
+        dataInicioSemana,
+        numDiasSemana,
+        medicosSemana,
+        diasDeFeriasPorMedico
+      )
+
       escala.push(...escalaSemana)
     })
 
@@ -74,7 +85,14 @@ router.post('/criar', async (req, res) => {
     res.redirect('/doctors')
   } catch (error) {
     console.error(error)
-    res.status(500).json({ error: 'Erro ao gerar a escala' })
+    if (error.message.includes('Não há médicos suficientes para os turnos obrigatórios.')) {
+      res.status(400).json({
+        error:
+          'Não há médicos disponíveis para os turnos obrigatórios. Verifique as datas de férias dos médicos!! Certifique-se de que há mais médicos disponíveis para selecionar e tente novamente.',
+      })
+    } else {
+      res.status(500).json({ error: 'Erro ao gerar a escala' })
+    }
   }
 })
 
@@ -85,34 +103,28 @@ function calcularSemanas(dataInicio, dataFim) {
   while (dataAtual <= dataFim) {
     const semana = []
 
-    if (semanas.length === 0) {
-      // Se for a primeira semana
-      while (dataAtual <= dataFim && dataAtual.getDay() !== 0) {
-        semana.push(new Date(dataAtual))
-        dataAtual.setDate(dataAtual.getDate() + 1)
-      }
-      semanas.push(semana)
-    } else if (dataAtual >= dataFim) {
-      // Se for a última semana
-      while (dataAtual <= dataFim) {
-        semana.push(new Date(dataAtual))
-        dataAtual.setDate(dataAtual.getDate() + 1)
-      }
-      semanas.push(semana)
-    } else {
-      // Para as semanas intermediárias
-      if (dataAtual.getDay() !== 0) {
-        // Ajusta para começar no domingo
-        dataAtual.setDate(dataAtual.getDate() - dataAtual.getDay())
-      }
-      for (let i = 0; i < 7 && dataAtual <= dataFim; i++) {
-        semana.push(new Date(dataAtual))
-        dataAtual.setDate(dataAtual.getDate() + 1)
-      }
-      semanas.push(semana)
+    // Lógica para preencher a semana...
+
+    if (dataAtual <= dataFim) {
+      semana.push(new Date(dataAtual))
+      dataAtual.setDate(dataAtual.getDate() + 1)
+    }
+
+    // Iterar até o sábado da semana corrente
+    while (dataAtual.getDay() !== 6 && dataAtual <= dataFim) {
+      semana.push(new Date(dataAtual))
+      dataAtual.setDate(dataAtual.getDate() + 1)
+    }
+
+    // Adicionar a semana ao array de semanas
+    semanas.push(semana)
+
+    // Incrementar para o próximo dia (domingo)
+    if (dataAtual <= dataFim) {
+      semana.push(new Date(dataAtual))
+      dataAtual.setDate(dataAtual.getDate() + 1)
     }
   }
-
   return semanas
 }
 
@@ -121,57 +133,130 @@ function distribuirMedicosParaSemana(medicosSelecionados) {
   // Embaralhe os médicos para esta semana (ou implemente sua lógica de distribuição)
   return shuffleArray([...medicosSelecionados])
 }
-function criarEscala(dataInicio, numDiasSemana, medicosSemana) {
+function getDaysArray(startDate, endDate) {
+  return new Promise((resolve, reject) => {
+    try {
+      const daysArray = []
+      let currentDate = new Date(startDate)
+
+      // Loop para cada dia entre startDate e endDate
+      while (currentDate <= endDate) {
+        daysArray.push(new Date(currentDate))
+        currentDate.setDate(currentDate.getDate() + 1)
+      }
+
+      resolve(daysArray)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFeriasPorMedico) {
   const escala = []
-  const medicosDia = []
-  let dataInicialSemana = new Date(dataInicio) // Variável para controlar a data inicial da semana
+  const medicosAtribuidos = new Set()
+  shuffleArray(medicosDisponiveis)
 
-  // Primeira fase: distribuir um médico de dia e um de noite para cada dia da semana
-  for (let j = 0; j < 2; j++) {
-    for (let i = 0; i < numDiasSemana; i++) {
-      const dataAtual = new Date(dataInicialSemana)
-      dataAtual.setDate(dataAtual.getDate() + i)
-      // console.log(`Iteração ${i + 1}: Data: ${dataAtual.toDateString()}`)
-      console.log(`Médicos disponíveis: ${medicosSemana.length}`)
-      // Atribua um médico de dia
-      if (medicosSemana.length > 0 && j === 0) {
-        const medicoDia = medicosSemana.shift()
-        const [medicoID, medicoNome] = medicoDia.split(':')
-        //  console.log(`Médico ID: ${medicoID}, Médico Nome: ${medicoNome}`)
+  const distribuirMedicos = (medicos, dataAtual, turno) => {
+    const medicosDisponiveisNoTurno = medicos.filter(
+      medico => !medicosAtribuidos.has(medico.split(':')[0])
+    )
 
-        medicosDia.push({ medico: medicoID, dia: dataAtual, nomeMedico: medicoNome }) // Inclua a data completa
-        escala.push({ turno: 'dia', medico: medicoID, dia: dataAtual, nomeMedico: medicoNome })
-        //console.log(`Médicos disponíveis após atribuição: ${medicosSemana.length}`)
-      }
+    if (medicosDisponiveisNoTurno.length > 0) {
+      let medicoAtribuido = null
 
-      // Atribua um médico de noite
-      if (medicosSemana.length > 0 && j === 0) {
-        const medicoNoite = medicosSemana.shift()
-        const [medicoID, medicoNome] = medicoNoite.split(':') // Separar o ID e o nome
-        // console.log(`Médico ID: ${medicoID}, Médico Nome: ${medicoNome}`)
+      // Organizar médicos por disponibilidade de férias
+      medicosDisponiveisNoTurno.sort((a, b) => {
+        const [medicoIDA, medicoNomeA] = a.split(':')
+        const [medicoIDB, medicoNomeB] = b.split(':')
+        const diasDeFeriasA = diasDeFeriasPorMedico[medicoIDA] || []
+        const diasDeFeriasB = diasDeFeriasPorMedico[medicoIDB] || []
 
-        escala.push({ turno: 'noite', medico: medicoID, dia: dataAtual, nomeMedico: medicoNome })
+        return diasDeFeriasB.length - diasDeFeriasA.length
+      })
 
-        //console.log(`Médicos disponíveis após atribuição: ${medicosSemana.length}`)
-        //console.log(`Médicos disponíveis após atribuição: ${medicosSemana.length}`)
-      }
-      if (medicosSemana.length > 0 && j === 1) {
-        const medicoDiaExtra = medicosSemana.shift()
-        const [medicoID, medicoNome] = medicoDiaExtra.split(':') // Separar o ID e o nome
-        // console.log(`Médico ID: ${medicoID}, Médico Nome: ${medicoNome}`)
+      for (const medico of medicosDisponiveisNoTurno) {
+        const [medicoID, medicoNome] = medico.split(':')
+        const diasDeFerias = diasDeFeriasPorMedico[medicoID] || []
 
-        escala.push({
-          turno: 'dia',
+        // Verificar se o médico está de férias nesta data
+        if (
+          diasDeFerias.some(
+            feriasDate => new Date(feriasDate).toDateString() === dataAtual.toDateString()
+          )
+        ) {
+          console.log(`Médico em férias - ID: ${medicoID}, Nome: ${medicoNome}`)
+          continue // Pular para o próximo médico se estiver de férias
+        }
+
+        medicoAtribuido = {
+          turno: turno,
           medico: medicoID,
-          dia: medicosDia[i].dia,
+          dia: dataAtual,
           nomeMedico: medicoNome,
-        })
-        console.log(`Iteração ${i + 1}: Data: ${dataAtual.toDateString()}`)
+          diasDeFerias,
+        }
 
-        console.log(`Médicos disponíveis após atribuição: ${medicosSemana.length}`)
+        console.log(`Médico atribuído com sucesso.`)
+        break // Atribuir o médico e sair do loop
       }
+
+      if (medicoAtribuido) {
+        medicosAtribuidos.add(medicoAtribuido.medico)
+        escala.push(medicoAtribuido)
+      }
+    } else {
+      console.log(
+        `Não há médicos disponíveis para cobrir o turno ${turno} na data ${dataAtual.toDateString()}.`
+      )
+      return false // Não há médicos disponíveis, não atribuir e interromper a distribuição
+    }
+
+    return true // Médico atribuído com sucesso
+  }
+
+  // Distribuir médicos de férias no turno do dia
+  for (let i = 0; i < numDiasSemana; i++) {
+    const dataAtual = new Date(dataInicio)
+    dataAtual.setDate(dataAtual.getDate() + i)
+    if (!distribuirMedicos(medicosDisponiveis, dataAtual, 'dia')) {
+      throw new Error(
+        `Não há médicos suficientes para cobrir o turno do dia na data ${dataAtual.toDateString()}.`
+      )
     }
   }
+
+  // Distribuir médicos de férias no turno da noite
+  for (let i = 0; i < numDiasSemana; i++) {
+    const dataAtual = new Date(dataInicio)
+    dataAtual.setDate(dataAtual.getDate() + i)
+    if (!distribuirMedicos(medicosDisponiveis, dataAtual, 'noite')) {
+      throw new Error(
+        `Não há médicos suficientes para cobrir o turno da noite na data ${dataAtual.toDateString()}.`
+      )
+    }
+  }
+
+  // Verificar se os turnos obrigatórios foram preenchidos
+  const diasTurnoDia = escala.filter(item => item.turno === 'dia')
+  const diasTurnoNoite = escala.filter(item => item.turno === 'noite')
+
+  if (diasTurnoDia.length < numDiasSemana || diasTurnoNoite.length < numDiasSemana) {
+    throw new Error('Não há médicos suficientes para os turnos obrigatórios.')
+  }
+
+  // Distribuir médicos de férias no turno extra (j===2)
+  for (let i = 0; i < numDiasSemana; i++) {
+    const dataAtual = new Date(dataInicio)
+    dataAtual.setDate(dataAtual.getDate() + i)
+    if (!distribuirMedicos(medicosDisponiveis, dataAtual, 'dia')) {
+      console.log(
+        'Não há médicos suficientes para o turno extra na data ${dataAtual.toDateString()}.'
+      )
+      break // Não há médicos para o turno extra, interromper a distribuição
+    }
+  }
+
   return escala
 }
 
