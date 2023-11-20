@@ -5,29 +5,70 @@
 
 <head>
   <title>Criar Escala</title>
+  <link rel="stylesheet" type="text/css" href="your-css-file.css">
+</head>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Criar Escala</title>
+  <link rel="stylesheet" type="text/css" href="your-css-file.css">
 </head>
 
 <body>
-  <h1>Criar Nova Escala</h1>
-  <form action="/escala/criar" method="post">
-    <label for="dataInicio">Data de Início:</label>
-    <input type="date" id="dataInicio" name="dataInicio" required>
-    <label for="dataFim">Data de Fim:</label>
-    <input type="date" id="dataFim" name="dataFim" required>
+  <div class="formContainer">
+    <h1 class="formTitle">Criar Nova Escala</h1>
 
-    <h2>Médicos Disponíveis:</h2>
-    <ul>
-      <% doctors.forEach((doctor) => { %>
-      <li>
-        <input type="checkbox" name="medicos" value="<%= doctor._id %>:<%= doctor.nome %>">
-        <%= doctor.nome %>
+    <form action="/escala/criar" method="post">
+      <label for="dataInicio" class="formLabel">Data de Início:</label>
+      <input type="date" id="dataInicio" name="dataInicio" class="formInput" required>
+      <label for="dataFim" class="formLabel">Data de Fim:</label>
+      <input type="date" id="dataFim" name="dataFim" class="formInput" required>
 
-      </li>
-      <% }); %>
-    </ul>
+      <h2 class="formTitle">Médicos Disponíveis:</h2>
+      <input type="text" id="searchBar" class="searchBar" placeholder="Pesquisar por nome" oninput="filterDoctors()">
 
-    <button type="submit">Criar Escala</button>
-  </form>
+      <ul class="checkboxList" id="doctorList">
+        <% doctors.forEach((doctor) => { %>
+        <li class="checkboxItem">
+          <input type="checkbox" name="medicos" value="<%= doctor._id %>:<%= doctor.nome %>" id="medico<%= doctor._id %>">
+          <label for="medico<%= doctor._id %>" class="checkboxLabel"><%= doctor.nome %></label>
+        </li>
+        <% }); %>
+      </ul>
+
+      <button type="button" class="selectAllButton" onclick="selectAllDoctors()">Selecionar Todos</button>
+      <button type="submit" class="criarEscalaButton">Criar Escala</button>
+    </form>
+  </div>
+
+  <script>
+    function selectAllDoctors() {
+      const checkboxes = document.querySelectorAll('[name="medicos"]');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = true;
+      });
+    }
+
+    function filterDoctors() {
+      const searchBar = document.getElementById('searchBar');
+      const doctorList = document.getElementById('doctorList');
+      const filter = searchBar.value.toUpperCase();
+
+      const items = doctorList.getElementsByTagName('li');
+      for (let i = 0; i < items.length; i++) {
+        const label = items[i].getElementsByClassName('checkboxLabel')[0];
+        const name = label.textContent || label.innerText;
+
+        if (name.toUpperCase().indexOf(filter) > -1) {
+          items[i].style.display = '';
+        } else {
+          items[i].style.display = 'none';
+        }
+      }
+    }
+  </script>
 </body>
 
 </html>

@@ -1,0 +1,10 @@
+<!-- views/medico_delete.ejs -->
+
+<body>
+  <h1>Excluir Médico</h1>
+  <p>Você tem certeza de que deseja excluir o médico <%= medico.nome %>?</p>
+  <form action="/doctors/<%= medico._id %>/delete" method="post">
+    <button type="submit">Sim, Excluir</button>
+  </form>
+  <a href="/">Cancelar</a>
+</body>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Excluir Escala</title>
+</head>
+
+<body>
+  <h1>Excluir Escala</h1>
+  <p>Tem certeza de que deseja excluir esta escala?</p>
+  <form action="/escala/<%= escala._id %>/delete" method="post">
+    <button type="submit">Confirmar Exclusão</button>
+  </form>
+  <a href="/escala">Cancelar</a>
+</body>
+
+</html>

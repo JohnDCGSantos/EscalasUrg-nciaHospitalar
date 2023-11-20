@@ -155,12 +155,20 @@ function getDaysArray(startDate, endDate) {
 function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFeriasPorMedico) {
   const escala = []
   const medicosAtribuidos = new Set()
-  shuffleArray(medicosDisponiveis)
+  //shuffleArray(medicosDisponiveis)
+  function getWeekNumber(date) {
+    const d = new Date(date.getFullYear(), 0, 1)
+    const dayNum = date.getUTCDay() || 7
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum)
+    const yearStart = new Date(d.getUTCFullYear(), 0, 1)
+    return Math.ceil(((date - yearStart) / 86400000 + 1) / 7)
+  }
 
   const distribuirMedicos = (medicos, dataAtual, turno) => {
     const medicosDisponiveisNoTurno = medicos.filter(
       medico => !medicosAtribuidos.has(medico.split(':')[0])
     )
+    shuffleArray(medicosDisponiveisNoTurno)
 
     if (medicosDisponiveisNoTurno.length > 0) {
       let medicoAtribuido = null
@@ -172,7 +180,16 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
         const diasDeFeriasA = diasDeFeriasPorMedico[medicoIDA] || []
         const diasDeFeriasB = diasDeFeriasPorMedico[medicoIDB] || []
 
-        return diasDeFeriasB.length - diasDeFeriasA.length
+        // Ajuste para ordenar pelos dias de férias da semana em questão
+        const semanaAtual = getWeekNumber(dataAtual)
+        const diasDeFeriasSemanaA = diasDeFeriasA.filter(
+          feriasDate => getWeekNumber(new Date(feriasDate)) === semanaAtual
+        )
+        const diasDeFeriasSemanaB = diasDeFeriasB.filter(
+          feriasDate => getWeekNumber(new Date(feriasDate)) === semanaAtual
+        )
+
+        return diasDeFeriasSemanaB.length - diasDeFeriasSemanaA.length
       })
 
       for (const medico of medicosDisponiveisNoTurno) {
@@ -185,6 +202,36 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
             feriasDate => new Date(feriasDate).toDateString() === dataAtual.toDateString()
           )
         ) {
+          // Verificar se o médico tem 3 ou mais dias de férias consecutivos na mesma semana
+          if (temTresDiasConsecutivos(medicoID, dataAtual)) {
+            console.log(
+              `Médico com 3 ou mais dias de férias consecutivos na mesma semana - ID: ${medicoID}, Nome: ${medicoNome}`
+            )
+
+            // Excluir o médico da escala
+            medicosAtribuidos.add(medicoID)
+            continue // Pular para o próximo médico
+          }
+          // Verificar se o médico está de férias na sexta anterior ou na segunda seguinte
+          const sextaAnterior = new Date(dataAtual)
+          sextaAnterior.setDate(dataAtual.getDate() - ((dataAtual.getDay() + 2) % 7)) // Sexta é 5, então subtrai 2
+          const segundaSeguinte = new Date(dataAtual)
+          segundaSeguinte.setDate(dataAtual.getDate() + ((7 - dataAtual.getDay() + 1) % 7)) // Segunda é 1, então soma 1
+
+          if (
+            diasDeFerias.includes(sextaAnterior.toISOString()) &&
+            diasDeFerias.includes(segundaSeguinte.toISOString())
+          ) {
+            console.log(
+              `Médico de férias na sexta anterior e segunda seguinte - ID: ${medicoID}, Nome: ${medicoNome}`
+            )
+
+            // Excluir o médico da escala
+            medicosAtribuidos.add(medicoID)
+            console.log(`Médico excluído da escala por estar de férias na sexta e segunda.`)
+
+            continue // Pular para o próximo médico
+          }
           console.log(`Médico em férias - ID: ${medicoID}, Nome: ${medicoNome}`)
           continue // Pular para o próximo médico se estiver de férias
         }
@@ -215,14 +262,47 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
     return true // Médico atribuído com sucesso
   }
 
+  const getDiasFeriasSemana = (medicoID, semanaAtual) => {
+    const diasFerias = diasDeFeriasPorMedico[medicoID] || []
+    return diasFerias.filter(feriasDate => getWeekNumber(new Date(feriasDate)) === semanaAtual)
+  }
+
+  const temTresDiasConsecutivos = (medicoID, dataInicio) => {
+    const semanaInicio = getWeekNumber(dataInicio)
+
+    for (let semana = semanaInicio; semana <= semanaInicio + 1; semana++) {
+      const diasFeriasSemana = getDiasFeriasSemana(medicoID, semana)
+
+      // Ordenar os dias de férias na semana
+      diasFeriasSemana.sort((a, b) => new Date(a) - new Date(b))
+
+      // Verificar se há 3 ou mais dias consecutivos
+      let diasConsecutivos = 1
+
+      for (let i = 1; i < diasFeriasSemana.length; i++) {
+        const current = new Date(diasFeriasSemana[i])
+        const prev = new Date(diasFeriasSemana[i - 1])
+
+        const diffTime = Math.abs(current - prev)
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+        diasConsecutivos = diffDays === 1 ? diasConsecutivos + 1 : 1
+
+        if (diasConsecutivos >= 3) {
+          return true
+        }
+      }
+    }
+
+    return false
+  }
+
   // Distribuir médicos de férias no turno do dia
   for (let i = 0; i < numDiasSemana; i++) {
     const dataAtual = new Date(dataInicio)
     dataAtual.setDate(dataAtual.getDate() + i)
     if (!distribuirMedicos(medicosDisponiveis, dataAtual, 'dia')) {
-      throw new Error(
-        `Não há médicos suficientes para cobrir o turno do dia na data ${dataAtual.toDateString()}.`
-      )
+      throw new Error(`Não há médicos suficientes para os turnos obrigatórios.`)
     }
   }
 
@@ -231,9 +311,7 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
     const dataAtual = new Date(dataInicio)
     dataAtual.setDate(dataAtual.getDate() + i)
     if (!distribuirMedicos(medicosDisponiveis, dataAtual, 'noite')) {
-      throw new Error(
-        `Não há médicos suficientes para cobrir o turno da noite na data ${dataAtual.toDateString()}.`
-      )
+      throw new Error(`Não há médicos suficientes para os turnos obrigatórios.`)
     }
   }
 
@@ -285,6 +363,41 @@ router.get('/:escalaId', async (req, res) => {
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Erro ao buscar detalhes da escala' })
+  }
+})
+
+router.get('/:id/delete', async (req, res) => {
+  const escalaId = req.params.id
+
+  try {
+    // Encontrar a escala pelo ID
+    const escala = await Escala.findById(escalaId)
+
+    if (!escala) {
+      return res.status(404).send('Escala não encontrada')
+    }
+
+    // Renderizar a página de confirmação de exclusão
+    res.render('escalas/delete', { escala })
+  } catch (err) {
+    console.error(err)
+    res.status(500).send('Erro ao obter informações da escala')
+  }
+})
+
+// Rota para processar a exclusão da escala
+router.post('/:id/delete', async (req, res) => {
+  const escalaId = req.params.id
+
+  try {
+    // Excluir a escala pelo ID
+    await Escala.findByIdAndDelete(escalaId)
+
+    // Redirecionar para a lista de escalas ou qualquer outra página desejada
+    res.redirect('/escala')
+  } catch (err) {
+    console.error(err)
+    res.status(500).send('Erro ao excluir a escala')
   }
 })
 

@@ -2,89 +2,94 @@
 <html>
 
 <head>
-  <title>Visualizar Escala</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      color: #333;
-      text-align: center;
+  <title>Detalhes da Escala</title>
+
+  <script>
+    function ordenarTabela(coluna) {
+      const tabela = document.getElementById("tabelaMedicos");
+      const linhas = Array.from(tabela.getElementsByTagName("tr")).slice(1); // Ignora a primeira linha (cabeçalho)
+      const ordem = tabela.getAttribute("data-ordem") === "asc" ? -1 : 1;
+
+      linhas.sort((a, b) => {
+        const valorA = a.getElementsByTagName("td")[coluna].innerText.trim();
+        const valorB = b.getElementsByTagName("td")[coluna].innerText.trim();
+
+        if (coluna === 1) { // Se for a coluna de data, converter para um objeto Date para comparação
+          const dataA = new Date(valorA);
+          const dataB = new Date(valorB);
+          return (dataA - dataB) * ordem;
+        } else {
+          return isNaN(valorA) ? valorA.localeCompare(valorB) * ordem : (valorA - valorB) * ordem;
+        }
+      });
+
+      // Remove as linhas existentes da tabela
+      linhas.forEach(linha => tabela.appendChild(linha));
+
+      // Inverte a ordem para a próxima vez
+      tabela.setAttribute("data-ordem", ordem === 1 ? "desc" : "asc");
     }
+  </script>
+</head>
 
-    h1 {
-      color: #008000;
-    }
+<!-- ... (código anterior) ... -->
 
-    .success-message {
-      background-color: #dff0d8;
-      border: 1px solid #d6e9c6;
-      color: #3c763d;
-      padding: 15px;
-      margin: 20px 0;
-      border-radius: 5px;
-    }
+<!-- ... (código anterior) ... -->
 
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
+<!-- ... (código anterior) ... -->
 
-    li {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      margin: 5px 0;
-      padding: 10px;
-      border-radius: 5px;
-    }
-  </style>
-  <!DOCTYPE html>
-  <html>
+<!-- ... (código anterior) ... -->
 
-  <head>
-    <title>Visualizar Escala</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        text-align: center;
-      }
+<body class="bodyScale">
+  <div class="escalaDetalhes">
+    <h1>Detalhes da Escala</h1>
+    <!-- Data de Início -->
+    <p>Data de Início: <%= escala.dataInicio.toDateString() %></p>
+    <!-- Data de Fim -->
+    <p>Data de Fim: <%= escala.dataFim.toDateString() %></p>
+  </div>
 
-      h1 {
-        color: #008000;
-      }
+  </div>
 
-      ul {
-        list-style-type: none;
-        padding: 0;
-      }
+  <table id="tabelaMedicos">
+    <!-- Nova linha para as datas -->
 
-      li {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        margin: 5px 0;
-        padding: 10px;
-        border-radius: 5px;
-      }
-    </style>
-  </head>
-
-<body>
-  <h1>Detalhes da Escala</h1>
-
-  <p>Data de Início: <%= escala.dataInicio.toDateString() %></p>
-  <p>Data de Fim: <%= escala.dataFim.toDateString() %></p>
-  <h2>Medicos na Escala</h2>
-  <ul>
-    <% escala.medicos.forEach(medico => { %>
-    <li>
-      <strong>Nome do Médico:</strong> <%= medico.nomeMedico %><br>
-      <strong>Data:</strong> <%= medico.dia.toDateString() %><br>
-      <strong>Turno:</strong> <%= medico.turno %><br>
-    </li>
+    <tr>
+      <th class=nomeTittle onclick="ordenarTabela(0)">Nome do Médico</th>
+      <th class=nomeTittle onclick="ordenarTabela(1)">Data</th>
+      <th class=nomeTittle onclick="ordenarTabela(2)">Turno</th>
+    </tr>
+    <% const coresMedicos = {}; %>
+    <% escala.medicos.forEach((medico) => { %>
+    <% const medicoNome = medico.nomeMedico; %>
+    <% const cor = coresMedicos[medicoNome] || getRandomColor(); %>
+    <% coresMedicos[medicoNome] = cor; %>
+    <tr style="background-color: <%= cor %>;">
+      <td class=nomeTittle><%= medicoNome %></td>
+      <td class=nomeTittle><%= medico.dia.toISOString().split('T')[0] %></td>
+      <td class=nomeTittle><%= medico.turno %></td>
+    </tr>
     <% }); %>
-  </ul>
-  <a href="/escala">Voltar para a lista de escalas</a>
+
+
+    </td>
+    </tr>
+  </table>
+
+
+  <div class="btnsEscala">
+    <div class="excluirEscala">
+      <form action="/escala/<%= escala._id %>/delete" method="get">
+        <button type="submit">Excluir Escala</button>
+      </form>
+    </div>
+    <div class="voltar">
+      <a href="/escala">Voltar para a lista de escalas</a>
+    </div>
+  </div>
+  <% function getRandomColor() { return 'rgba(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ', 0.5)'; } %>
+
 </body>
+
 
 </html>

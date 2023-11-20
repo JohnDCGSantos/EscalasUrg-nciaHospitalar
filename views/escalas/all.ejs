@@ -1,10 +1,14 @@
-<body>
-  <h1>Lista de Escalas</h1>
-
+<body class="listEscala">
+  <h1 class="listEscalaTitle">Lista de Escalas</h1>
+  <a href="/escala/criar" class="addButton">Adicionar Escala</a>
 
   <% allEscalas.forEach(escala => { %>
-  <li> <a href="/escala/<%= escala._id %>"><%= escala.dataInicio.toDateString() %></a></li>
+  <li class="listEscalaItem">
+    <a href="/escala/<%= escala._id %>" class="listEscalaLink"><%= escala.dataInicio.toDateString() %></a>
+    <form action="/escala/<%= escala._id %>/delete" method="get">
+      <button type="submit">Excluir Escala</button>
+
+  </li>
   <% }); %>
   </ul>
-  <a href="/escala/criar">Adicionar Escala</a>
 </body>
