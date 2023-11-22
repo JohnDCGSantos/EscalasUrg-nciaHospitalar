@@ -571,3 +571,8 @@ a.addButton:hover {
       bottom: 0;
       width: 100%;
     }
+
+
+    .updateDocBt{
+      padding-bottom: 100px;
+    }

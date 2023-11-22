@@ -20,12 +20,13 @@
       </div>
       <% } %>
     </div>
+    <div class="updateDocBt">
+      <button type="button" onclick="addFeriasInput()" class="buttonAddData">Adicionar Data de Férias</button>
 
-    <button type="button" onclick="addFeriasInput()" class="buttonAddData">Adicionar Data de Férias</button>
+      <input type="hidden" id="feriasCount" name="feriasCount" value="<%= medico.historicoFerias.length %>">
 
-    <input type="hidden" id="feriasCount" name="feriasCount" value="<%= medico.historicoFerias.length %>">
-
-    <button type="submit" class="buttonAddDoc">Atualizar Médico</button>
+      <button type="submit" class="buttonAddDoc">Atualizar Médico</button>
+    </div>
   </form>
 
   <script>
