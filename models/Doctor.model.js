@@ -1,6 +1,5 @@
 const { Schema, model } = require('mongoose')
 
-// TODO: Please make sure you edit the User model to whatever makes sense in this case
 const doctorSchema = new Schema(
   {
     nome: {
@@ -19,10 +18,10 @@ const doctorSchema = new Schema(
         },
       },
     ],
-    diasDeFerias: [Date], // Novo campo para armazenar os dias de férias
+    diasDeFerias: [Date],
   },
   {
-    timestamps: true, // Adicionar timestamps para `createdAt` e `updatedAt`
+    timestamps: true,
   }
 )
 

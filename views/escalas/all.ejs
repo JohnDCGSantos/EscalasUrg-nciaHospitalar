@@ -1,14 +1,51 @@
 <body class="listEscala">
   <h1 class="listEscalaTitle">Lista de Escalas</h1>
-  <a href="/escala/criar" class="addButton">Adicionar Escala</a>
+  <div class="ordenar">
+    <button id="ordenarButton" class="ordenar-button">Ordenar por Data <span class="seta">&#9650;</span></button>
+  </div>
+  <ul class="ulEscala">
+    <% allEscalas.forEach(escala => { %>
 
-  <% allEscalas.forEach(escala => { %>
-  <li class="listEscalaItem">
-    <a href="/escala/<%= escala._id %>" class="listEscalaLink"><%= escala.dataInicio.toDateString() %></a>
-    <form action="/escala/<%= escala._id %>/delete" method="get">
-      <button type="submit">Excluir Escala</button>
-
-  </li>
-  <% }); %>
+    <li class="listEscalaItem">
+      <a href="/escala/<%= escala._id %>" class="listEscalaLink">Data inicial da escala: <%= escala.dataInicio.toDateString() %></a>
+      <form action="/escala/<%= escala._id %>/delete" method="get">
+        <button class='RemoveScale' type="submit">Excluir Escala</button>
+      </form>
+    </li>
+    <% }); %>
   </ul>
+  <div class="criarEscalaNovaBtn">
+    <a href="/escala/criar" class="addButton">Criar Nova Escala</a>
+  </div>
 </body>
+
+<script>
+  const ordenarButton = document.getElementById("ordenarButton");
+  let ascendente = true;
+
+  ordenarButton.addEventListener("click", function() {
+    ascendente = !ascendente;
+    ordenarEscalas(ascendente);
+  });
+
+  function ordenarEscalas(ascendente) {
+    const ulEscala = document.querySelector(".ulEscala");
+    const listItems = Array.from(ulEscala.children);
+
+    listItems.sort(function(a, b) {
+      const dateA = new Date(a.querySelector(".listEscalaLink").textContent.split(":")[1].trim());
+      const dateB = new Date(b.querySelector(".listEscalaLink").textContent.split(":")[1].trim());
+
+      return ascendente ? dateA - dateB : dateB - dateA;
+    });
+
+    listItems.forEach(function(item) {
+      ulEscala.appendChild(item);
+    });
+
+    // Atualizar a orientação da seta
+    const seta = ordenarButton.querySelector(".seta");
+    seta.innerHTML = ascendente ? "&#9650;" : "&#9660;";
+    seta.classList.toggle("seta-up", ascendente);
+  }
+</script>

@@ -45,15 +45,10 @@ router.post('/criar', async (req, res) => {
     const escala = []
 
     semanas.forEach((semana, index) => {
-      // Aqui você tem cada semana dentro do loop para processamento
       const dataInicioSemana = semana[0]
       const dataFimSemana = semana[semana.length - 1]
-
-      // Restante da lógica para criar a escala usando medicosSelecionados
       const medicosSemana = distribuirMedicosParaSemana(medicosSelecionados)
-
       const numDiasSemana = semana.length
-
       console.log(
         `Semana ${
           index + 1
@@ -77,12 +72,8 @@ router.post('/criar', async (req, res) => {
       dataFim: dataFim,
       medicos: escala,
     })
-
-    // Salve a nova escala no banco de dados
     await novaEscala.save()
-
-    // Redirecione para a página dos médicos
-    res.redirect('/doctors')
+    res.redirect('/escala')
   } catch (error) {
     console.error(error)
     if (error.message.includes('Não há médicos suficientes para os turnos obrigatórios.')) {
@@ -102,8 +93,6 @@ function calcularSemanas(dataInicio, dataFim) {
 
   while (dataAtual <= dataFim) {
     const semana = []
-
-    // Lógica para preencher a semana...
 
     if (dataAtual <= dataFim) {
       semana.push(new Date(dataAtual))
@@ -130,26 +119,8 @@ function calcularSemanas(dataInicio, dataFim) {
 
 // Função para distribuir médicos para uma semana
 function distribuirMedicosParaSemana(medicosSelecionados) {
-  // Embaralhe os médicos para esta semana (ou implemente sua lógica de distribuição)
+  // Embaralhar os médicos para esta semana
   return shuffleArray([...medicosSelecionados])
-}
-function getDaysArray(startDate, endDate) {
-  return new Promise((resolve, reject) => {
-    try {
-      const daysArray = []
-      let currentDate = new Date(startDate)
-
-      // Loop para cada dia entre startDate e endDate
-      while (currentDate <= endDate) {
-        daysArray.push(new Date(currentDate))
-        currentDate.setDate(currentDate.getDate() + 1)
-      }
-
-      resolve(daysArray)
-    } catch (error) {
-      reject(error)
-    }
-  })
 }
 
 function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFeriasPorMedico) {
@@ -180,7 +151,7 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
         const diasDeFeriasA = diasDeFeriasPorMedico[medicoIDA] || []
         const diasDeFeriasB = diasDeFeriasPorMedico[medicoIDB] || []
 
-        // Ajuste para ordenar pelos dias de férias da semana em questão
+        //ordenar pelos dias de férias da semana em questão
         const semanaAtual = getWeekNumber(dataAtual)
         const diasDeFeriasSemanaA = diasDeFeriasA.filter(
           feriasDate => getWeekNumber(new Date(feriasDate)) === semanaAtual
@@ -210,8 +181,9 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
 
             // Excluir o médico da escala
             medicosAtribuidos.add(medicoID)
-            continue // Pular para o próximo médico
+            continue //  próximo médico
           }
+
           // Verificar se o médico está de férias na sexta anterior ou na segunda seguinte
           const sextaAnterior = new Date(dataAtual)
           sextaAnterior.setDate(dataAtual.getDate() - ((dataAtual.getDay() + 2) % 7)) // Sexta é 5, então subtrai 2
@@ -230,10 +202,10 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
             medicosAtribuidos.add(medicoID)
             console.log(`Médico excluído da escala por estar de férias na sexta e segunda.`)
 
-            continue // Pular para o próximo médico
+            continue //  próximo médico
           }
           console.log(`Médico em férias - ID: ${medicoID}, Nome: ${medicoNome}`)
-          continue // Pular para o próximo médico se estiver de férias
+          continue //  próximo médico, se estiver de férias
         }
 
         medicoAtribuido = {
@@ -297,7 +269,7 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
     return false
   }
 
-  // Distribuir médicos de férias no turno do dia
+  // Distribuir médicos  no turno do dia
   for (let i = 0; i < numDiasSemana; i++) {
     const dataAtual = new Date(dataInicio)
     dataAtual.setDate(dataAtual.getDate() + i)
@@ -306,7 +278,7 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
     }
   }
 
-  // Distribuir médicos de férias no turno da noite
+  // Distribuir médicos  no turno da noite
   for (let i = 0; i < numDiasSemana; i++) {
     const dataAtual = new Date(dataInicio)
     dataAtual.setDate(dataAtual.getDate() + i)
@@ -323,7 +295,18 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
     throw new Error('Não há médicos suficientes para os turnos obrigatórios.')
   }
 
-  // Distribuir médicos de férias no turno extra (j===2)
+  // Distribuir médicos  no turno extra dia hosp b (j===2)
+  for (let i = 0; i < numDiasSemana; i++) {
+    const dataAtual = new Date(dataInicio)
+    dataAtual.setDate(dataAtual.getDate() + i)
+    if (!distribuirMedicos(medicosDisponiveis, dataAtual, 'diaHospB')) {
+      console.log(
+        'Não há médicos suficientes para o turno extra na data ${dataAtual.toDateString()}.'
+      )
+      break // Não há médicos para o turno extra, interromper a distribuição
+    }
+  }
+  // Distribuir médicos  no turno extra dia(j===2)
   for (let i = 0; i < numDiasSemana; i++) {
     const dataAtual = new Date(dataInicio)
     dataAtual.setDate(dataAtual.getDate() + i)
@@ -338,7 +321,6 @@ function criarEscala(dataInicio, numDiasSemana, medicosDisponiveis, diasDeFerias
   return escala
 }
 
-// Função para embaralhar um array
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -352,6 +334,7 @@ router.get('/', async (req, res, next) => {
   res.render('escalas/all', { allEscalas })
 })
 
+//rota para aceder a escala
 router.get('/:escalaId', async (req, res) => {
   try {
     const escala = await Escala.findById(req.params.escalaId)
@@ -366,6 +349,7 @@ router.get('/:escalaId', async (req, res) => {
   }
 })
 
+//rota para pagina delete da escala
 router.get('/:id/delete', async (req, res) => {
   const escalaId = req.params.id
 

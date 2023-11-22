@@ -1,19 +1,34 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>Lista de Médicos</title>
-</head>
-
 <body>
-  <h1>Lista de Médicos</h1>
+  <h1 class="listEscalaTitle">Lista de Médicos</h1>
 
+  <div class="optionsWrapper">
+    <input type="text" id="searchBar" class="searchBarInput" placeholder="Pesquisar por nome" oninput="filterDoctors()">
+    <a href="/doctors/adicionar" class="addDoctorButton">Adicionar Médico</a>
+  </div>
 
-  <% allDocs.forEach(doctor => { %>
-  <li> <a href="/doctors/<%= doctor._id %>"><%= doctor.nome %></a></li>
-  <% }); %>
+  <ul id="doctorList" class="doctorList">
+    <!-- Adicione um ID à lista -->
+    <% allDocs.forEach(doctor => { %>
+    <li class="doctorItem"> <a class="listEscalaLink" href="/doctors/<%= doctor._id %>"><%= doctor.nome %></a></li>
+    <% }); %>
   </ul>
-  <a href="/doctors/adicionar">Adicionar Médico</a>
 </body>
+<script>
+  function filterDoctors() {
+    const searchBar = document.getElementById('searchBar');
+    const doctorList = document.getElementById('doctorList');
+    const filter = searchBar.value.toUpperCase();
 
-</html>
+    const items = doctorList.getElementsByTagName('li');
+    for (let i = 0; i < items.length; i++) {
+      const label = items[i].getElementsByTagName('a')[0];
+      const name = label.textContent || label.innerText;
+
+      if (name.toUpperCase().indexOf(filter) > -1) {
+        items[i].style.display = '';
+      } else {
+        items[i].style.display = 'none';
+      }
+    }
+  }
+</script>

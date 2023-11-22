@@ -1,17 +1,19 @@
 const express = require('express')
 const Doctor = require('../models/Doctor.model')
 const router = express.Router()
-const ObjectId = require('mongoose').Types.ObjectId
 
+//Get todos os médicos
 router.get('/', async (req, res, next) => {
   const allDocs = await Doctor.find()
 
   res.render('doctors/all', { allDocs })
 })
 
+//Get página add médico
 router.get('/adicionar', (req, res, next) => {
   res.render('doctors/new')
 })
+
 function getDaysArray(startDate, endDate) {
   return new Promise((resolve, reject) => {
     try {
@@ -44,7 +46,7 @@ async function obterDiasFerias(medico) {
 
   return diasFerias
 }
-
+//rota para processar o add do médico
 router.post('/adicionar', async (req, res, next) => {
   try {
     const { nome } = req.body
@@ -80,6 +82,7 @@ router.post('/adicionar', async (req, res, next) => {
   }
 })
 
+//rota para aceder a um médico
 router.get('/:id', async (req, res) => {
   try {
     const medico = await Doctor.findById(req.params.id)
@@ -89,6 +92,8 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar detalhes do médico' })
   }
 })
+
+//rota para aceder a pagina de update
 router.get('/:id/update', async (req, res) => {
   const medicoId = req.params.id
 
@@ -101,7 +106,7 @@ router.get('/:id/update', async (req, res) => {
     res.status(500).send('Erro ao encontrar médico.')
   }
 })
-// Na sua rota
+// rota para processar update
 router.post('/:id/update', async (req, res) => {
   const medicoId = req.params.id
   const { nome, feriasCount, ...historicoFerias } = req.body
@@ -118,7 +123,7 @@ router.post('/:id/update', async (req, res) => {
       const dataInicio = new Date(historicoFerias[`historicoFerias[${i}][dataInicio]`])
       const dataFim = new Date(historicoFerias[`historicoFerias[${i}][dataFim]`])
 
-      // Perform additional validation if necessary
+      // Perform additional validation
       if (isNaN(dataInicio) || isNaN(dataFim) || dataInicio > dataFim) {
         console.error('Invalid date range for vacation entry:', i)
         continue
@@ -150,6 +155,7 @@ router.post('/:id/update', async (req, res) => {
   }
 })
 
+//rota para eliminar médico
 router.get('/:id/delete', async (req, res) => {
   try {
     const medico = await Doctor.findById(req.params.id)

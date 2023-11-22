@@ -3,24 +3,16 @@ body {
   padding: 10px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   height: 100vh;
-height: 100vh;
+  height: 100vh;
 
 }
 
-a {
-  color: #00b7ff;
-}
-
-h1 {
-  color: 15px;
-}
-
+/*Home Page*/
 
 .homeContainer {
   height: 80%;
   text-align: center;
- margin-top: 50px;
-
+  margin-top: 50px;
   padding: 20px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -39,7 +31,7 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: center;
- 
+  align-items: center
 }
 
 .btnHome {
@@ -50,45 +42,64 @@ h1 {
   color: #fff;
   background-color: #3498db;
   border-radius: 5px;
-  transition: background-color 0.3s ease;
+  width: 200px;
+  transition:  0.3s ease;
 }
 
 .btnHome:hover {
   background-color: #2c3e50;
 }
 
-/*add doctor*/
+/*add doctor-----------------------------------------------------------------*/
 
-
-
-/* Add your global styles here */
-
-
-
-.formTitle {
-  color: #333;
+h1.docFormTitle {
   text-align: center;
+  margin: 15px;
 }
 
-.formLabel {
+input#nome{
+  background-color: whitesmoke;
+  width:100%;
+  border: 1px solid black;
+}
+
+.nomeDocNew{
+  background-color: whitesmoke;
+  width: 100%;
+}
+
+.docFormLabel {
   display: block;
   margin-top: 10px;
   margin-bottom: 5px;
-  color: #666;
+  margin:15px auto;
+  background-color: whitesmoke;
 }
 
-.formInput {
+.formDocAdd{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.docFormInput {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
   margin-bottom: 15px;
   box-sizing: border-box;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 4px; 
+}
+
+#ferias-container{
+  width: 100%;
 }
 
 .ferias-group {
   margin-bottom: 20px;
+ width:100%
 }
 
 .buttonAddDoc,
@@ -106,7 +117,9 @@ h1 {
   background-color: #4caf50;
   color: white;
 }
-
+.btnsAdd{
+  padding-bottom: 100px;
+}
 .buttonAddDoc:hover {
   background-color: #45a049;
 }
@@ -120,19 +133,15 @@ h1 {
   background-color: #2980b9;
 }
 
-/* Add more specific styles for other pages if needed ------criar escala*/
+/* Criar Escala---------------------------------------------------------*/
 .formContainer {
   max-width: 400px;
-  margin: 20px auto; /* Added lateral margins */
-  background-color: white;
+  margin: 10px auto; 
+  background-color: whitesmoke;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.formTitle {
-  color: #333;
-  text-align: center;
+  margin-bottom: 50px;
 }
 
 .formLabel {
@@ -150,6 +159,11 @@ h1 {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.searchBar{
+  width:100%;
+  margin-bottom: 15px;
 }
 
 .checkboxList {
@@ -177,12 +191,25 @@ h1 {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  text-decoration: none;
+  text-align: center;
 }
-.criarEscalaButton {
-  display: block;
+
+.submitScale{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: 10px 15px;
-  margin-top: 10px;
+  margin-bottom: 30px;
+  height: 100px;
+  padding-bottom: 100px;
+}
+
+.criarEscalaButton {
+  width: 300px;
+  padding: 10px;
+  margin-top: 5px;
   background-color: #45a049;
   color: white;
   border: none;
@@ -195,61 +222,119 @@ h1 {
 }
 
 
-/*escalas*/
-body.listEscala {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f4f4;
-  color: #333;
-  margin: 20px;
-}
+/*lista de escalas-----------------------------------------------------------------*/
 
 h1.listEscalaTitle {
-  color: #009688;
+  color: black;
+  text-align: center;
+  padding:10px;
+  margin-top:15px;
+  margin-bottom: 15px;
 }
 
-ul.listEscalaItems {
+.ulEscala {
   list-style: none;
-  padding: 0;
+  padding: 5px;
 }
 
 li.listEscalaItem {
   margin-bottom: 10px;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid gray;;
+  padding: 20px;
+  background-color: whitesmoke;
 }
 
 a.listEscalaLink {
   text-decoration: none;
   list-style: none;
-  color: #039be5;
+  color: #3498db;
 }
 
 a.listEscalaLink:hover {
-  text-decoration: underline;
+  text-decoration: none;
+  color: #008000;
+}
+
+.RemoveScale {
+  background-color: #3498db; 
+  padding: 10px ;
+  border-radius: 5px;
+  color: #fff; 
+  border: none; 
+  cursor: pointer; 
+  font-size: 10px;
+  margin-top: 30px; 
+}
+
+.RemoveScale:hover {
+  background-color: #ff0000; 
+}
+
+.ordenar-button {
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  border-radius: 5px;
+  font-size: 10px;
+}
+
+.ordenar-button:hover {
+  background-color: #45a049;
+}
+
+.ordenar{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.seta {
+  margin-left: 5px;
+  font-size: 12px;
+  display: inline-block;
+  transition: transform 1s ease;
+}
+
+.criarEscalaNovaBtn{
+  height:50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 130px; 
+
 }
 
 a.addButton {
   display: block;
-  background-color: #4caf50;
+  background-color: #039be5;
+  border-radius: 5px;
+width: 300px;
   color: white;
   padding: 10px 15px;
   text-align: center;
   text-decoration: none;
   font-size: 16px;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 a.addButton:hover {
   background-color: #45a049;
 }
 
-
-
-
 .name-row {
-  color: black; /* Default color or any other color you prefer */
+  color: black; 
 }
 
-/*table*/
+/*escala----------------------------------------------------------------*/
 
     .bodyTable {
       font-family: Arial, sans-serif;
@@ -263,32 +348,29 @@ a.addButton:hover {
 
     table {
       width: 100%;
-   
-      
        border: 1px solid black;
     }
 
     
     td {
-font-size: 15px;
+      font-size: 15px;
       padding: 8px;
       text-align:center;
     }
 
     th {
-      background-color: #ddd; /* ou qualquer outra cor desejada */
+      background-color: #ddd; 
       color: black;
       cursor: pointer;
-     
     }
-tr {
-  border: 1px solid black;
 
-text-align: center;
-      }
+    tr {
+      border: 1px solid black;
+      text-align: center;
+    }
     
     th:hover {
-      background-color: wheat; /* ou qualquer outra cor desejada */
+      background-color: wheat; 
     }
   
     .excluirEscala button {
@@ -302,6 +384,7 @@ text-align: center;
       border-radius: 4px;
       cursor: pointer;
     }
+
     .voltar  {
       display: block;
       width: 250px;
@@ -312,20 +395,21 @@ text-align: center;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-            ;
-
     }
+
     .voltar a{
      color: white;
      text-decoration: none;
     }
+
     .btnsEscala{
-    
       display: flex;
       align-items: center;
       flex-direction: column;
       padding: 25px;
+      padding-bottom: 100px;
     }
+
    .nomeTittle{
       border: 1px solid black;
     }
@@ -337,3 +421,145 @@ text-align: center;
       align-items: center
     }
     
+/*Lista de médicos-----------------------------------------------------------------------------*/
+    .optionsWrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .searchBarInput {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+
+    .addDoctorButton {
+      text-decoration: none;
+      background-color: #3498db;
+      color: white;
+      padding: 10px ;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .addDoctorButton:hover {
+      background-color: #45a049;
+    }
+
+    .doctorList {
+      display: flex;
+      width:100%;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10px;
+      align-items: center;
+      list-style-type: none;
+      padding-bottom: 100px; 
+
+    }
+
+    .doctorItem {
+      width:100%;
+      text-align: center;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    .doctorItem:hover {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    a.listEscalaLink {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    a.listEscalaLink:hover{
+      color: #008000;
+    }
+
+
+/*detalhes do médico------------------------------------------------------------------------------*/
+    .details-list {
+      list-style-type: none;
+      padding: 0; 
+    }
+
+    .feriasCard {
+      background-color: #3498db; 
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .details-item {
+      margin-bottom: 10px; 
+    }
+
+    .btnDocUpdate {
+      display: flex;
+      position: fixed;
+      width: 100%;
+      bottom: 10px; 
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px; 
+
+    }
+
+    .action-button, .delete-button {
+      background-color: #3498db; 
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      text-decoration: none;
+      margin:10px;
+      width:200px;
+      text-align: center;
+      
+    }
+
+    .action-button:hover {
+      background-color: green;;
+    }
+
+    .delete-button:hover {
+      background-color:red;
+    }
+
+    .link {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .ferias-group{
+    background-color: whitesmoke;
+    }
+    
+    input.docFormInput{
+      background-color: whitesmoke;
+      border: 1px solid black;
+
+    }
+/*footer----------------------------------------------------------*/
+    .footer {
+      background-color: whitesmoke;
+      color: black;
+      padding: 15px;
+      text-align: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }

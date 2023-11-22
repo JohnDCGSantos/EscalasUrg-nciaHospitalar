@@ -1,36 +1,27 @@
-<!-- views/detalhes-medico.ejs - Página de Detalhes do Médico -->
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>Detalhes do Médico</title>
-</head>
-
 <body>
-  <h1>Detalhes do Médico: <%= medico.nome %></h1>
-  <h2>Períodos de Férias:</h2>
-  <ul>
+  <h1 class="header">Detalhes do Médico: <%= medico.nome %></h1>
+
+  <ul class="details-list">
     <% medico.historicoFerias.forEach(ferias => { %>
-    <li>Data de Início: <%= ferias.dataInicio %></li>
-    <li>Data de Término: <%= ferias.dataFim %></li>
+    <div class="feriasCard">
+      <h4>Férias</h4>
+
+      <li class="details-item">Data de Início: <%= new Date(ferias.dataInicio).toLocaleDateString() %></li>
+      <li class="details-item">Data de Término: <%= new Date(ferias.dataFim).toLocaleDateString() %></li>
+    </div>
     <% }); %>
   </ul>
+  <div class="btnDocUpdate">
+    <!-- Botão para Atualizar Médico -->
+    <a href="/doctors/<%= medico._id %>/update" class="action-button">
+      Atualizar Médico
+    </a>
 
-  <ul>
-    <% medico.historicoFerias %>
-    </li>
 
-  </ul>
-  <!-- Botão para Atualizar Médico -->
-  <a href="/doctors/<%= medico._id %>/update">
-    <button>Atualizar Médico</button>
-  </a>
-
-  <!-- Botão para Excluir Médico -->
-  <a href="/doctors/<%= medico._id %>/delete">
-    <button>Excluir Médico</button>
-  </a>
-  <a href="/doctors">Voltar para a Lista de Médicos</a>
+    <a href="/doctors/<%= medico._id %>/delete" class="delete-button">
+      Excluir Médico
+    </a>
+    <a href="/doctors" class="link">Voltar para a Lista de Médicos</a>
 </body>
-
-</html>
+</div>
+</div>

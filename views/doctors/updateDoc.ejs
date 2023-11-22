@@ -1,41 +1,31 @@
-<!-- updateMedico.ejs -->
-<!-- updateMedico.ejs -->
-<html>
-
-<head>
-  <title>Atualizar Médico</title>
-</head>
-
 <body>
-  <h1>Atualizar Médico</h1>
+  <h1 class="docFormTitle">Atualizar Médico</h1>
   <form action="/doctors/<%= medico._id %>/update" method="post">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" value="<%= medico.nome %>" required>
+    <div class="nomeDoc">
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" name="nome" value="<%= medico.nome %>" required>
+    </div>
 
-    <!-- Container para os campos de férias -->
     <div id="ferias-container">
       <!-- Iterar sobre o histórico de férias -->
       <% for (let i = 0; i < medico.historicoFerias.length; i++) { %>
       <div class="ferias-group">
-        <label>Data de Início de Férias:</label>
-        <input type="date" name="historicoFerias[<%= i %>][dataInicio]" value="<%= medico.historicoFerias[i].dataInicio ? medico.historicoFerias[i].dataInicio.toISOString().split('T')[0] : '' %>">
+        <label class="docFormLabel">Data de Início de Férias:</label>
+        <input type="date" name="historicoFerias[<%= i %>][dataInicio]" value="<%= medico.historicoFerias[i].dataInicio ? medico.historicoFerias[i].dataInicio.toISOString().split('T')[0] : '' %>" class="docFormInput">
 
-        <label>Data de Término de Férias:</label>
-        <input type="date" name="historicoFerias[<%= i %>][dataFim]" value="<%= medico.historicoFerias[i].dataFim ? medico.historicoFerias[i].dataFim.toISOString().split('T')[0] : '' %>">
+        <label class="docFormLabel">Data de Término de Férias:</label>
+        <input type="date" name="historicoFerias[<%= i %>][dataFim]" value="<%= medico.historicoFerias[i].dataFim ? medico.historicoFerias[i].dataFim.toISOString().split('T')[0] : '' %>" class="docFormInput">
 
-        <button type="button" onclick="deleteFeriasInput(this)">Excluir</button>
+        <button type="button" onclick="deleteFeriasInput(this) " class='RemoveScale'>Excluir</button>
       </div>
       <% } %>
     </div>
 
-    <!-- Botão para adicionar novos campos de férias -->
-    <button type="button" onclick="addFeriasInput()">Adicionar Data de Férias</button>
+    <button type="button" onclick="addFeriasInput()" class="buttonAddData">Adicionar Data de Férias</button>
 
-    <!-- Campo oculto para contar o número de campos de férias -->
     <input type="hidden" id="feriasCount" name="feriasCount" value="<%= medico.historicoFerias.length %>">
 
-    <!-- Botão de envio do formulário -->
-    <button type="submit">Atualizar Médico</button>
+    <button type="submit" class="buttonAddDoc">Atualizar Médico</button>
   </form>
 
   <script>
@@ -44,20 +34,30 @@
       const dataIndex = parseInt(document.getElementById("feriasCount").value);
       const feriasGroup = document.createElement("div");
       feriasGroup.className = "ferias-group";
+      const dataInicioLabel = document.createElement("label");
+      dataInicioLabel.textContent = "Data de Início de Férias:";
+      dataInicioLabel.className = "docFormLabel";
+      feriasGroup.appendChild(dataInicioLabel);
 
       const dataInicioInput = document.createElement("input");
       dataInicioInput.type = "date";
       dataInicioInput.name = `historicoFerias[${dataIndex}][dataInicio]`;
+      dataInicioInput.className = "docFormInput";
       feriasGroup.appendChild(dataInicioInput);
-
+      const dataFimLabel = document.createElement("label");
+      dataFimLabel.textContent = "Data de Término de Férias:";
+      dataFimLabel.className = "docFormLabel";
+      feriasGroup.appendChild(dataFimLabel);
       const dataFimInput = document.createElement("input");
       dataFimInput.type = "date";
       dataFimInput.name = `historicoFerias[${dataIndex}][dataFim]`;
+      dataFimInput.className = "docFormInput";
       feriasGroup.appendChild(dataFimInput);
 
       const deleteButton = document.createElement("button");
       deleteButton.type = "button";
       deleteButton.textContent = "Excluir";
+      deleteButton.className = 'RemoveScale'
       deleteButton.onclick = function() {
         deleteFeriasInput(deleteButton);
       };
@@ -74,6 +74,3 @@
     }
   </script>
 </body>
-
-
-</html>

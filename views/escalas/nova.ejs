@@ -1,21 +1,3 @@
-<!-- views/criarEscala.ejs -->
-
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>Criar Escala</title>
-  <link rel="stylesheet" type="text/css" href="your-css-file.css">
-</head>
-
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>Criar Escala</title>
-  <link rel="stylesheet" type="text/css" href="your-css-file.css">
-</head>
-
 <body>
   <div class="formContainer">
     <h1 class="formTitle">Criar Nova Escala</h1>
@@ -26,7 +8,7 @@
       <label for="dataFim" class="formLabel">Data de Fim:</label>
       <input type="date" id="dataFim" name="dataFim" class="formInput" required>
 
-      <h2 class="formTitle">Médicos Disponíveis:</h2>
+      <h4 class="formTitle">Selecionar médicos:</h4>
       <input type="text" id="searchBar" class="searchBar" placeholder="Pesquisar por nome" oninput="filterDoctors()">
 
       <ul class="checkboxList" id="doctorList">
@@ -39,36 +21,40 @@
       </ul>
 
       <button type="button" class="selectAllButton" onclick="selectAllDoctors()">Selecionar Todos</button>
-      <button type="submit" class="criarEscalaButton">Criar Escala</button>
-    </form>
+
+      <a href="/doctors/adicionar" class="selectAllButton">Adicionar Novo Médico</a>
   </div>
-
-  <script>
-    function selectAllDoctors() {
-      const checkboxes = document.querySelectorAll('[name="medicos"]');
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = true;
-      });
-    }
-
-    function filterDoctors() {
-      const searchBar = document.getElementById('searchBar');
-      const doctorList = document.getElementById('doctorList');
-      const filter = searchBar.value.toUpperCase();
-
-      const items = doctorList.getElementsByTagName('li');
-      for (let i = 0; i < items.length; i++) {
-        const label = items[i].getElementsByClassName('checkboxLabel')[0];
-        const name = label.textContent || label.innerText;
-
-        if (name.toUpperCase().indexOf(filter) > -1) {
-          items[i].style.display = '';
-        } else {
-          items[i].style.display = 'none';
-        }
-      }
-    }
-  </script>
+  <div class="submitScale">
+    <button type="submit" class="criarEscalaButton">Criar Escala</button>
+  </div>
+  </form>
+  </div>
 </body>
 
-</html>
+
+<script>
+  function selectAllDoctors() {
+    const checkboxes = document.querySelectorAll('[name="medicos"]');
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = true;
+    });
+  }
+
+  function filterDoctors() {
+    const searchBar = document.getElementById('searchBar');
+    const doctorList = document.getElementById('doctorList');
+    const filter = searchBar.value.toUpperCase();
+
+    const items = doctorList.getElementsByTagName('li');
+    for (let i = 0; i < items.length; i++) {
+      const label = items[i].getElementsByClassName('checkboxLabel')[0];
+      const name = label.textContent || label.innerText;
+
+      if (name.toUpperCase().indexOf(filter) > -1) {
+        items[i].style.display = '';
+      } else {
+        items[i].style.display = 'none';
+      }
+    }
+  }
+</script>

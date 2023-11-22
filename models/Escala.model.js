@@ -1,6 +1,5 @@
 const { Schema, model } = require('mongoose')
 
-// TODO: Please make sure you edit the User model to whatever makes sense in this case
 const escalaSchema = new Schema(
   {
     dataInicio: {
@@ -20,7 +19,7 @@ const escalaSchema = new Schema(
           required: true,
         },
         nomeMedico: {
-          type: String, // Adicione o campo de nome do médico
+          type: String,
         },
         diasDeFerias: [{ type: Date }],
 
@@ -29,13 +28,13 @@ const escalaSchema = new Schema(
         },
         turno: {
           type: String,
-          enum: ['dia', 'noite'],
+          enum: ['dia', 'noite', 'diaHospB'],
         },
       },
     ],
   },
   {
-    timestamps: true, // Adicionar timestamps para `createdAt` e `updatedAt`
+    timestamps: true,
   }
 )
 

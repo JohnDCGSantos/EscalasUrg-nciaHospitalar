@@ -32,27 +32,16 @@
   </script>
 </head>
 
-<!-- ... (código anterior) ... -->
-
-<!-- ... (código anterior) ... -->
-
-<!-- ... (código anterior) ... -->
-
-<!-- ... (código anterior) ... -->
-
 <body class="bodyScale">
   <div class="escalaDetalhes">
     <h1>Detalhes da Escala</h1>
-    <!-- Data de Início -->
     <p>Data de Início: <%= escala.dataInicio.toDateString() %></p>
-    <!-- Data de Fim -->
     <p>Data de Fim: <%= escala.dataFim.toDateString() %></p>
   </div>
 
   </div>
 
   <table id="tabelaMedicos">
-    <!-- Nova linha para as datas -->
 
     <tr>
       <th class=nomeTittle onclick="ordenarTabela(0)">Nome do Médico</th>
@@ -70,8 +59,6 @@
       <td class=nomeTittle><%= medico.turno %></td>
     </tr>
     <% }); %>
-
-
     </td>
     </tr>
   </table>
