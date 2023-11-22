@@ -40,30 +40,32 @@
   </div>
 
   </div>
+  <div>
+    <table id="tabelaMedicos">
 
-  <table id="tabelaMedicos">
-
-    <tr>
-      <th class=nomeTittle onclick="ordenarTabela(0)">Nome do Médico</th>
-      <th class=nomeTittle onclick="ordenarTabela(1)">Data</th>
-      <th class=nomeTittle onclick="ordenarTabela(2)">Turno</th>
-    </tr>
-    <% const coresMedicos = {}; %>
-    <% escala.medicos.forEach((medico) => { %>
-    <% const medicoNome = medico.nomeMedico; %>
-    <% const cor = coresMedicos[medicoNome] || getRandomColor(); %>
-    <% coresMedicos[medicoNome] = cor; %>
-    <tr style="background-color: <%= cor %>;">
-      <td class=nomeTittle><%= medicoNome %></td>
-      <td class=nomeTittle><%= medico.dia.toISOString().split('T')[0] %></td>
-      <td class=nomeTittle><%= medico.turno %></td>
-    </tr>
-    <% }); %>
-    </td>
-    </tr>
-  </table>
-
-
+      <tr>
+        <th class=nomeTittle onclick="ordenarTabela(0)">Nome do Médico</th>
+        <th class=nomeTittle onclick="ordenarTabela(1)">Data</th>
+        <th class=nomeTittle onclick="ordenarTabela(2)">Turno</th>
+      </tr>
+      <% const coresMedicos = {}; %>
+      <% escala.medicos.forEach((medico) => { %>
+      <% const medicoNome = medico.nomeMedico; %>
+      <% const cor = coresMedicos[medicoNome] || getRandomColor(); %>
+      <% coresMedicos[medicoNome] = cor; %>
+      <tr style="background-color: <%= cor %>;">
+        <td class=nomeTittle><%= medicoNome %></td>
+        <td class=nomeTittle><%= medico.dia.toISOString().split('T')[0] %></td>
+        <td class=nomeTittle><%= medico.turno %></td>
+      </tr>
+      <% }); %>
+      </td>
+      </tr>
+    </table>
+  </div>
+  <div class="downloadPdf">
+    <a href="#" id="downloadPdfBtn">Download PDF</a>
+  </div>
   <div class="btnsEscala">
     <div class="excluirEscala">
       <form action="/escala/<%= escala._id %>/delete" method="get">
@@ -77,6 +79,23 @@
   <% function getRandomColor() { return 'rgba(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ', 0.5)'; } %>
 
 </body>
-
+<script>
+  const escalaId = "<%= escala._id %>"
+  document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+    // Quando o botão é clicado,  requisição para o servidor para o download do PDF
+    fetch(`/escala/${escalaId}/pdf`)
+      .then(response => response.blob())
+      .then(blob => {
+        // Criar link temporário e clicar nele para iniciar o download
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'escala.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch(error => console.error('Erro ao baixar o PDF', error));
+  });
+</script>
 
 </html>

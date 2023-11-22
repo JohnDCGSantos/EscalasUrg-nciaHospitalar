@@ -335,11 +335,18 @@ a.addButton:hover {
 }
 
 /*escala----------------------------------------------------------------*/
-
+#tabelaMedicos{
+  width: 90%;
+  margin:10px auto
+}
+.downloadPdf{
+  text-align: center;
+}
     .bodyTable {
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       color: #333;
+     
     }
 
     h1 {
@@ -349,6 +356,7 @@ a.addButton:hover {
     table {
       width: 100%;
        border: 1px solid black;
+        margin-right:50px
     }
 
     

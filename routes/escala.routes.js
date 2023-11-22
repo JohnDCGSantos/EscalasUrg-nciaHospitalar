@@ -3,6 +3,10 @@ const Doctor = require('../models/Doctor.model')
 const Escala = require('../models/Escala.model')
 const router = express.Router()
 
+const pdf = require('html-pdf')
+const path = require('path')
+const ejs = require('ejs')
+const cheerio = require('cheerio')
 // Rota para exibir o formulário de criação da escala
 router.get('/criar', async (req, res) => {
   try {
@@ -343,6 +347,52 @@ router.get('/:escalaId', async (req, res) => {
       return res.status(404).json({ error: 'Escala não encontrada' })
     }
     res.render('escalas/visualizar', { escala })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Erro ao buscar detalhes da escala' })
+  }
+})
+
+//download pdf
+router.get('/:escalaId/pdf', async (req, res) => {
+  try {
+    const escala = await Escala.findById(req.params.escalaId)
+
+    if (!escala) {
+      return res.status(404).json({ error: 'Escala não encontrada' })
+    }
+
+    // Gerar o HTML da tabela com o template EJS
+    const html = await ejs.renderFile(path.join(__dirname, '../views/escalas/visualizar.ejs'), {
+      escala,
+    })
+
+    // Extrair apenas a tabela do HTML com o Cheerio
+    const $ = cheerio.load(html)
+    const tableHtml = $('#tabelaMedicos').parent().html()
+
+    // Configurações do PDF
+    const pdfOptions = {
+      format: 'Letter',
+      border: {
+        top: '1cm',
+        right: '1cm',
+        bottom: '1cm',
+        left: '1cm',
+      },
+    }
+    // Gerar  PDF
+    pdf.create(tableHtml, pdfOptions).toBuffer((err, buffer) => {
+      if (err) {
+        console.error(err)
+        return res.status(500).json({ error: 'Erro ao gerar o PDF' })
+      }
+
+      // Enviar  PDF como resposta
+      res.setHeader('Content-Disposition', 'attachment; filename=escala.pdf')
+      res.setHeader('Content-Type', 'application/pdf')
+      res.send(buffer)
+    })
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Erro ao buscar detalhes da escala' })
