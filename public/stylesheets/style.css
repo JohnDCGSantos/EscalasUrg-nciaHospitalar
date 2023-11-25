@@ -501,9 +501,13 @@ a.addButton:hover {
       list-style-type: none;
       padding: 0; 
     }
+.header1{
+text-align: center;
+padding: 10px;
+}
 
     .feriasCard {
-      background-color: #3498db; 
+      background-color: rgba(52, 152, 219,0.5);
       padding: 10px;
       margin: 10px;
       border-radius: 8px;
@@ -516,9 +520,9 @@ a.addButton:hover {
 
     .btnDocUpdate {
       display: flex;
-      position: fixed;
+      position: absolute;
       width: 100%;
-      bottom: 10px; 
+     
       flex-direction: column;
       align-items: center;
       padding-bottom: 50px; 
@@ -577,10 +581,72 @@ a.addButton:hover {
       justify-content: space-between;
     }
     
-.madeLove{
-  margin-right: 20px;
+    .madeLove{
+      margin-right: 20px;
 }
 
     .updateDocBt{
       padding-bottom: 100px;
     }
+
+    .calendario {
+      width: 90%;
+      height: 100%;;
+      background-color: #eee;
+    margin-right: 10px ;
+    }
+
+    .fc-toolbar-chunk{
+      display:flex;
+      flex-direction: column;
+      align-items: space-evenly;
+      margin: 10px;
+    }
+
+    .fc .fc-button {
+      margin-bottom: 10px;
+    }
+
+    .calendarpos{
+      width: 100vw;
+      height: 100vh;
+      padding-bottom: 7rem;
+      display: flex;
+      flex-direction:column ;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .calCont{
+      height: 100%;
+      width:90%;
+      display:flex;
+      flex-direction: column;
+      padding: 20px;
+      background-color: rgba(52, 152, 219,0.5);
+    }
+
+    h3.histMed {
+     padding: 20px;
+     text-align: center;
+    }
+
+    .col{
+      display: flex;
+      justify-content: center;
+ margin-bottom: 10px;
+    }
+
+    .row row-cols-2{
+      align-items: center;
+    }
+
+    .histCale {
+ padding: 10px;
+ margin-top: 70px;
+    }
+  
+    .fc-event-time{
+      display : none;
+   }
+  

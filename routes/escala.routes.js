@@ -10,7 +10,7 @@ const cheerio = require('cheerio')
 // Rota para exibir o formulário de criação da escala
 router.get('/criar', async (req, res) => {
   try {
-    // Consultar banco de dados para obter a lista de médicos disponíveis
+    // Consultar base de dados para obter a lista de médicos disponíveis
     const doctors = await Doctor.find()
     //console.log(doctors)
     res.render('escalas/nova', { doctors })

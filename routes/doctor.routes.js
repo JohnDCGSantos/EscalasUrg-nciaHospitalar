@@ -1,7 +1,7 @@
 const express = require('express')
 const Doctor = require('../models/Doctor.model')
 const router = express.Router()
-
+const Escala = require('../models/Escala.model')
 //Get todos os médicos
 router.get('/', async (req, res, next) => {
   const allDocs = await Doctor.find()
@@ -81,14 +81,55 @@ router.post('/adicionar', async (req, res, next) => {
     res.status(500).json({ error: 'Erro ao adicionar médico' })
   }
 })
+async function obterDiasTrabalhoDoMedico(medico) {
+  try {
+    // Lógica para obter os dias de trabalho do médico a partir da escala
+    const escala = await Escala.find({ medicos: { $elemMatch: { idMedico: medico._id } } })
+
+    if (!escala || escala.length === 0) {
+      return []
+    }
+
+    const diasDeTrabalho = escala.reduce((result, semana) => {
+      const diasTrabalhoSemana = semana.medicos
+        .filter(medicoEscala => medicoEscala.idMedico.equals(medico._id))
+        .map(medicoEscala => medicoEscala.dia.toISOString().split('T')[0])
+
+      return result.concat(diasTrabalhoSemana)
+    }, [])
+
+    return diasDeTrabalho
+  } catch (error) {
+    console.error('Erro ao obter dias de trabalho do médico:', error)
+    return []
+  }
+}
 
 //rota para aceder a um médico
 router.get('/:id', async (req, res) => {
   try {
     const medico = await Doctor.findById(req.params.id)
-    console.log(medico)
-    res.render('doctors/one', { medico })
+    const escalas = await Escala.find({ 'medicos.medico': medico._id })
+    const medicoNaEscalaInfo = []
+
+    console.log(escalas)
+
+    escalas.forEach(escala => {
+      escala.medicos.forEach(medicoNaEscala => {
+        if (medicoNaEscala.medico.toString() === req.params.id) {
+          medicoNaEscalaInfo.push({
+            escalaId: escala._id,
+            dia: medicoNaEscala.dia,
+            turno: medicoNaEscala.turno,
+          })
+          console.log(medicoNaEscalaInfo)
+        }
+      })
+    })
+
+    res.render('doctors/one', { medico, escalas, medicoNaEscalaInfo })
   } catch (error) {
+    console.error(error)
     res.status(500).json({ error: 'Erro ao buscar detalhes do médico' })
   }
 })
