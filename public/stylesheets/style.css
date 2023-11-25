@@ -14,8 +14,10 @@ body {
   text-align: center;
   margin-top: 50px;
   padding: 20px;
-  background-color: #fff;
+  background-color: rgb(255, 255, 255,0.3);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2; 
 }
 
 .homeTitle {
@@ -26,12 +28,24 @@ body {
   margin-top: 20px;
 }
 
+.back-image{
+  background-image: url('/images/back.jpg'); /* Substitua pelo caminho real da sua imagem */
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Fixa o fundo durante a rolagem */
+ 
+
+}
 .addOptions {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center
+  justify-content: flex-start;
+  align-items: center;
+  padding-top:20px ;
+  position: relative;
+  z-index: -5; 
 }
 
 .btnHome {
@@ -40,7 +54,7 @@ body {
   margin: 20px;
   text-decoration: none;
   color: #fff;
-  background-color: #3498db;
+  background-color: rgba(52, 152, 219,0.9);
   border-radius: 5px;
   width: 200px;
   transition:  0.3s ease;
@@ -58,13 +72,13 @@ h1.docFormTitle {
 }
 
 input#nome{
-  background-color: whitesmoke;
+  background-color: rgb(255, 255, 255,0.3);
   width:100%;
-  border: 1px solid black;
+  border: 1px solid rgba(0, 0, 0,0.3);
 }
 
 .nomeDocNew{
-  background-color: whitesmoke;
+  background-color: rgb(255, 255, 255,0.3);
   width: 100%;
 }
 
@@ -73,7 +87,7 @@ input#nome{
   margin-top: 10px;
   margin-bottom: 5px;
   margin:15px auto;
-  background-color: whitesmoke;
+  background-color: rgb(255, 255, 255,0.3)
 }
 
 .formDocAdd{
@@ -95,11 +109,13 @@ input#nome{
 
 #ferias-container{
   width: 100%;
+
 }
 
 .ferias-group {
   margin-bottom: 20px;
- width:100%
+ width:100%;
+   background-color: rgb(255, 255, 255,0.3);
 }
 
 .buttonAddDoc,
@@ -114,7 +130,7 @@ input#nome{
 }
 
 .buttonAddDoc {
-  background-color: #4caf50;
+  background-color: rgba(76, 175, 80,0.9);
   color: white;
    width: 100%;
 }
@@ -126,7 +142,7 @@ input#nome{
 }
 
 .buttonAddData {
-  background-color: #3498db;
+  background-color: rgb(52, 152, 219,0.8);
   color: white;
 }
 
@@ -138,7 +154,7 @@ input#nome{
 .formContainer {
   width: 100%;
   margin: 10px auto; 
-  background-color: whitesmoke;
+  background-color: rgb(245, 245, 245,0.5);
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -149,7 +165,7 @@ input#nome{
   display: block;
   margin-top: 10px;
   margin-bottom: 5px;
-  color: #666;
+
 }
 
 .formInput {
@@ -160,11 +176,16 @@ input#nome{
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: rgba(245, 245, 245,0.5);
 }
+
 
 .searchBar{
   width:100%;
   margin-bottom: 15px;
+    background-color: rgba(245, 245, 245,0.3);
+    border: 1px solid rgba(0, 0, 0,0.3);
+
 }
 
 .checkboxList {
@@ -187,7 +208,7 @@ input#nome{
   width: 100%;
   padding: 10px 15px;
   margin-top: 10px;
-  background-color: #3498db;
+  background-color: rgb(52, 152, 219,0.8);
   color: white;
   border: none;
   border-radius: 4px;
@@ -211,7 +232,7 @@ input#nome{
   width: 300px;
   padding: 10px;
   margin-top: 5px;
-  background-color: #45a049;
+  background-color: rgb(69, 160, 73,0.8);
   color: white;
   border: none;
   border-radius: 4px;
@@ -244,15 +265,17 @@ li.listEscalaItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid gray;;
+  border: 1px solid rgba(128, 128, 128,0.5);;
   padding: 20px;
-  background-color: whitesmoke;
+  background-color: rgba(245, 245, 245,0.5);
 }
 
 a.listEscalaLink {
   text-decoration: none;
   list-style: none;
-  color: #3498db;
+  color: rgb(52, 152, 219,0.9);
+  font-size: 20px;
+  background-color: rgb(245, 245, 245,0.7);
 }
 
 a.listEscalaLink:hover {
@@ -261,7 +284,7 @@ a.listEscalaLink:hover {
 }
 
 .RemoveScale {
-  background-color: #3498db; 
+  background-color: rgba(52, 152, 219,0.8);
   padding: 10px ;
   border-radius: 5px;
   color: #fff; 
@@ -279,7 +302,7 @@ a.listEscalaLink:hover {
   padding: 10px;
   cursor: pointer;
   border: none;
-  background-color: #3498db;
+  background-color: rgba(52, 152, 219,0.8);
   color: white;
   border-radius: 5px;
   font-size: 10px;
@@ -316,7 +339,7 @@ a.listEscalaLink:hover {
 
 a.addButton {
   display: block;
-  background-color: #039be5;
+  background-color: rgb(3, 155, 229,0.8);
   border-radius: 5px;
 width: 300px;
   color: white;
@@ -338,10 +361,25 @@ a.addButton:hover {
 /*escala----------------------------------------------------------------*/
 #tabelaMedicos{
   width: 90%;
-  margin:10px auto
+  margin:10px auto;
+  overflow-x: auto; /* Adicione esta propriedade para rolar horizontalmente em dispositivos móveis */
+
 }
 .downloadPdf{
-  text-align: center;
+
+ text-align: center;
+}
+#downloadPdfBtn{
+   color: white;
+  text-decoration: none;
+ text-align: center;
+  background-color: rgb(3, 155, 229,0.8);
+  padding: 8px;
+  border-radius: 5px;
+ 
+}
+#downloadPdfBtn:hover{
+  background-color: rgb(3,155,229);
 }
     .bodyTable {
       font-family: Arial, sans-serif;
@@ -387,25 +425,29 @@ a.addButton:hover {
       width: 250px;
       padding: 10px 15px;
       margin-top: 10px;
-      background-color: red;
+      background-color: rgba(255, 0, 0,0.8);
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
-
+    .excluirEscala button:hover{
+      background-color: rgba(255, 0, 0);
+    }
     .voltar  {
       display: block;
       width: 250px;
       padding: 10px 15px;
       margin-top: 10px;
-      background-color: #039be5;
+      background-color: rgba(3, 155, 229,0.8);
       text-align: center;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
-
+    .voltar:hover {
+      background-color: rgb(3, 155, 229);
+    }
     .voltar a{
      color: white;
      text-decoration: none;
@@ -449,7 +491,7 @@ a.addButton:hover {
 
     .addDoctorButton {
       text-decoration: none;
-      background-color: #3498db;
+      background-color: rgba(52, 152, 219,0.8);
       color: white;
       padding: 10px ;
       border-radius: 4px;
@@ -475,7 +517,7 @@ a.addButton:hover {
     .doctorItem {
       width:100%;
       text-align: center;
-      background-color: #fff;
+      background-color: rgb(255, 255, 255,0.5);
       border: 1px solid #ddd;
       margin: 5px 0;
       padding: 10px;
@@ -558,12 +600,12 @@ padding: 10px;
     }
 
     .ferias-group{
-    background-color: whitesmoke;
+    background-color: rgb(255, 255, 255,0.3);
     }
     
     input.docFormInput{
-      background-color: whitesmoke;
-      border: 1px solid black;
+      background-color: rgb(255, 255, 255,0.3);
+      border: 1px solid rgba(0, 0, 0,0.3);
 
     }
 /*footer----------------------------------------------------------*/
@@ -592,8 +634,9 @@ padding: 10px;
     .calendario {
       width: 90%;
       height: 100%;;
-      background-color: #eee;
+      background-color: rgb(238, 238, 238,0.8);
     margin-right: 10px ;
+    
     }
 
     .fc-toolbar-chunk{

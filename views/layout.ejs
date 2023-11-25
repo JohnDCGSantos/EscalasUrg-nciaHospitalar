@@ -10,62 +10,67 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 
-<body>
-  <nav class="navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">Escalas Urgência</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-link active" aria-current="page" href="/">Home</a>
-          <a class="nav-link" href="/escala"> Escalas</a>
-          <a class="nav-link" href="/doctors">Médicos</a></a>
 
-        </div>
+
+
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Escalas Urgência</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link active" aria-current="page" href="/">Home</a>
+        <a class="nav-link" href="/escala"> Escalas</a>
+        <a class="nav-link" href="/doctors">Médicos</a></a>
+
       </div>
     </div>
-  </nav>
-  </nav>
-
-
-  <%- body %>
-  <div class="footer" id="footer">
-    <div class="times">
-      <span id="currentDateTime"></span>
-    </div>
-    <div class='madeLove'>
-      <p>Made with <span class="heart">&#10084;&#65039;</span> by João Santos</p>
-    </div>
   </div>
+</nav>
+</nav>
+
+<body class="back-image">
+  <!-- O restante do seu conteúdo aqui -->
+</body>
+
+<%- body %>
+<div class="footer" id="footer">
+  <div class="times">
+    <span id="currentDateTime"></span>
+  </div>
+  <div class='madeLove'>
+    <p>Made with <span class="heart">&#10084;&#65039;</span> by João Santos</p>
+  </div>
+</div>
 
 
-  <script src="/js/script.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-  <script>
-    function updateCurrentDateTime() {
-      const currentDateTimeElement = document.getElementById("currentDateTime");
-      const options = {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
-        hour12: true
-      };
-      const currentDateTime = new Date().toLocaleString('en-US', options);
-      currentDateTimeElement.textContent = currentDateTime;
-    }
+<script src="/js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script>
+  function updateCurrentDateTime() {
+    const currentDateTimeElement = document.getElementById("currentDateTime");
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: true
+    };
+    const currentDateTime = new Date().toLocaleString('en-US', options);
+    currentDateTimeElement.textContent = currentDateTime;
+  }
 
-    // Initial update
-    updateCurrentDateTime();
+  // Initial update
+  updateCurrentDateTime();
 
-    // Update every second (optional)
-    setInterval(updateCurrentDateTime, 1000);
-  </script>
+  // Update every second (optional)
+  setInterval(updateCurrentDateTime, 1000);
+</script>
 </body>
 
 </html>
