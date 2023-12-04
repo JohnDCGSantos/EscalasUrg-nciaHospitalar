@@ -6,8 +6,12 @@
 
 
 <body>
+  <% if (typeof errorMessage !== 'undefined') { %>
+  <p style="color: red; background-color: darkgrey;"><%= errorMessage %></p>
+  <% } %>
+
   <h1 class="header1">Detalhes do Médico: <%= medico.nome %></h1>
-  <h3 class="header1">Histórico de férias</h3>
+
   <ul class="details-list">
     <% medico.historicoFerias.forEach(ferias => { %>
     <div class="feriasCard">
@@ -17,39 +21,39 @@
     </div>
     <% }); %>
   </ul>
-  <h3 class="histMed">Histórico de escalas</h3>
-  <div class="row row-cols-2">
-
-    <% escalas.forEach(escala => { %>
-
-    <div class="col">
-      <div class="calCont">
 
 
-        <h4>Periodo da Escala:</h4>
-        <%= formatDate(escala.dataInicio) %> - <%= formatDate(escala.dataFim) %>
+  <% const hoje = new Date(); %>
+  <% const proximaUrgencia = encontrarProximaUrgencia(escalas, medicoNaEscalaInfo, hoje); %>
 
-        <% function formatDate(date) { %>
-        <% const day = date.getDate(); %>
-        <% const month = date.getMonth() + 1; %>
-        <% const year = date.getFullYear(); %>
-        <%= `${day}/${month}/${year}` %>
-        <% } %>
+  <% if (proximaUrgencia) { %>
+  <div class="calCont">
+    <h4>Próxima Urgência:</h4>
+    <p>Periodo da Escala: <%= formatDate(proximaUrgencia.escala.dataInicio) %> - <%= formatDate(proximaUrgencia.escala.dataFim) %></p>
+    <p>Dia de Trabalho: <%= formatDate(proximaUrgencia.info.dia) %> Turno: <%= proximaUrgencia.info.turno %></p>
+  </div>
+  <% } else { %>
+  <p>Não há urgências futuras agendadas.</p>
+  <% } %>
 
-        <h4>Dias de trabalho:</h4>
+  <% function encontrarProximaUrgencia(escalas, medicoNaEscalaInfo, hoje) { %>
+  <% for (const escala of escalas) { %>
+  <% for (const info of medicoNaEscalaInfo) { %>
+  <% if (info.escalaId && info.escalaId.toString() === escala._id.toString() && new Date(info.dia) >= hoje) { %>
+  <% return { escala, info }; %>
+  <% } %>
+  <% } %>
+  <% } %>
+  <% return null; %>
+  <% } %>
 
-        <% const diasTrabalhoUnicos = new Set(); %>
-        <% for (const info of medicoNaEscalaInfo) { %>
-        <% if (info.escalaId && info.escalaId.toString() === escala._id.toString()) { %>
-        <% const diaTrabalho = `${info.dia.toDateString()} turno: ${info.turno}`; %>
-        <% diasTrabalhoUnicos.add(diaTrabalho); %>
-        <li><%= diaTrabalho %></li>
-        <% } %>
-        <% } %>
+  <% function formatDate(date) { %>
+  <% const day = date.getDate(); %>
+  <% const month = date.getMonth() + 1; %>
+  <% const year = date.getFullYear(); %>
+  <%= `${day}/${month}/${year}` %>
+  <% } %>
 
-      </div>
-    </div>
-    <% }); %>
 
   </div>
   <div class="modal fade" id="eventoModal" tabindex="-1" role="dialog" aria-labelledby="eventoModalLabel" aria-hidden="true">

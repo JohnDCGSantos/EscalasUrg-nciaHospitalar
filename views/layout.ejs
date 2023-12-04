@@ -12,30 +12,42 @@
 
 
 
-
 <nav class="navbar navbar-expand-lg bg-light">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Escalas Urgência</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
+        <!-- Centralizado -->
+        <% if (!user) { %>
+        <a class="nav-link" href="/user/login">Login</a>
+        <a class="nav-link" href="/user/signup">Sign Up</a>
+        <% } else { %>
         <a class="nav-link active" aria-current="page" href="/">Home</a>
-        <a class="nav-link" href="/escala"> Escalas</a>
-        <a class="nav-link" href="/doctors">Médicos</a></a>
-
+        <a class="nav-link" href="/escala">Escalas</a>
+        <a class="nav-link" href="/doctors">Médicos</a>
+      </div>
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/user/logout">Logout</a> <!-- Somente Logout à direita -->
+        <% } %>
       </div>
     </div>
   </div>
 </nav>
-</nav>
+
+
+
+
 
 <body class="back-image">
   <!-- O restante do seu conteúdo aqui -->
-</body>
 
-<%- body %>
+
+  <%- body %>
+</body>
 <div class="footer" id="footer">
   <div class="times">
     <span id="currentDateTime"></span>

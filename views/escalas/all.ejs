@@ -1,18 +1,31 @@
 <body class="listEscala">
   <h1 class="listEscalaTitle">Lista de Escalas</h1>
+  <% if (typeof errorMessage !== 'undefined') { %>
+
+  <p style="color: red; background-color: darkgrey;"><%= errorMessage %></p>
+  <button onclick="window.history.back()">Voltar</button>
+
+  <% } %>
+
   <div class="ordenar">
     <button id="ordenarButton" class="ordenar-button">Ordenar por Data <span class="seta">&#9650;</span></button>
   </div>
   <ul class="ulEscala">
+    <% if (typeof allEscalas !== 'undefined') { %>
+
     <% allEscalas.forEach(escala => { %>
 
     <li class="listEscalaItem">
       <a href="/escala/<%= escala._id %>" class="listEscalaLink">Data inicial da escala: <%= escala.dataInicio.toDateString() %></a>
       <form action="/escala/<%= escala._id %>/delete" method="get">
         <button class='RemoveScale' type="submit">Excluir Escala</button>
+
       </form>
     </li>
     <% }); %>
+    <% } %>
+
+
   </ul>
   <div class="criarEscalaNovaBtn">
     <a href="/escala/criar" class="addButton">Criar Nova Escala</a>

@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html>
-
 <head>
   <title>Detalhes da Escala</title>
 
@@ -63,6 +60,8 @@
       const colunaInicial = 0; // Coluna inicial para a seta
       const ordemInicial = tabela.getAttribute("data-ordem") === "asc" ? 1 : -1;
       atualizarSetasOrdenacao(colunaInicial, ordemInicial);
+      ordenarTabela(colunaInicial);
+
     });
   </script>
 </head>
@@ -127,5 +126,3 @@
       .catch(error => console.error('Erro ao baixar o PDF', error));
   });
 </script>
-
-</html>

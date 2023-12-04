@@ -2,15 +2,20 @@ const express = require('express')
 const Doctor = require('../models/Doctor.model')
 const router = express.Router()
 const Escala = require('../models/Escala.model')
+const { isLoggedIn } = require('../middlewares/route-guard.middleware')
+const ObjectId = require('mongoose').Types.ObjectId
+const User = require('../models/User')
+const { isAdmin } = require('../middlewares/route-guard.middleware')
+
 //Get todos os médicos
-router.get('/', async (req, res, next) => {
+router.get('/', isLoggedIn, async (req, res, next) => {
   const allDocs = await Doctor.find()
 
   res.render('doctors/all', { allDocs })
 })
 
 //Get página add médico
-router.get('/adicionar', (req, res, next) => {
+router.get('/adicionar', isLoggedIn, (req, res, next) => {
   res.render('doctors/new')
 })
 
@@ -49,7 +54,7 @@ async function obterDiasFerias(medico) {
 //rota para processar o add do médico
 router.post('/adicionar', async (req, res, next) => {
   try {
-    const { nome } = req.body
+    const { nome, email } = req.body
     let dataInicio = req.body['historicoFerias[dataInicio][]']
     let dataFim = req.body['historicoFerias[dataFim][]']
     const historicoFerias = []
@@ -70,14 +75,29 @@ router.post('/adicionar', async (req, res, next) => {
       })
     }
 
-    const novoMedico = new Doctor({ nome, historicoFerias })
+    const novoMedico = new Doctor({ nome, email, historicoFerias })
     const diasDeFerias = await obterDiasFerias(novoMedico)
     novoMedico.diasDeFerias = diasDeFerias
     await novoMedico.save()
+    req.session.user.associatedDoctor = novoMedico._id
 
     res.redirect('/doctors')
   } catch (error) {
     console.error(error)
+
+    if (error.code === 11000) {
+      // Erro de duplicate key
+      const errorMessage =
+        error.keyPattern && error.keyPattern.email
+          ? 'O e-mail fornecido já está em uso.'
+          : error.keyPattern && error.keyPattern.nome
+          ? 'O nome fornecido já está em uso.'
+          : 'Erro ao adicionar médico'
+
+      return res.render('doctors/new', {
+        errorMessage,
+      })
+    }
     res.status(500).json({ error: 'Erro ao adicionar médico' })
   }
 })
@@ -106,9 +126,56 @@ async function obterDiasTrabalhoDoMedico(medico) {
 }
 
 //rota para aceder a um médico
-router.get('/:id', async (req, res) => {
+router.get('/:id', isLoggedIn, async (req, res) => {
+  let medico = null // Inicializa medico antes do bloco try
+
   try {
-    const medico = await Doctor.findById(req.params.id)
+    if (!req.session.user) {
+      return res.status(401).json({ error: 'Usuário não autenticado.' })
+    }
+
+    medico = await Doctor.findById(req.params.id)
+    console.log('Medico Object:', medico)
+
+    // Verifica se medico ou associatedDoctorId são undefined
+    if (!medico || !req.session.user.associatedDoctor) {
+      return res.status(403).json({
+        error:
+          'Acesso não autorizado a este médico. Por favor faça login com o mesmo email do médico que tenta aceder ou com conta de administrador',
+      })
+    }
+    if (req.session.user.role === 'admin') {
+      // Se for um administrador, permita o acesso a qualquer médico
+      const escalas = await Escala.find({ 'medicos.medico': medico._id })
+      const medicoNaEscalaInfo = []
+
+      escalas.forEach(escala => {
+        escala.medicos.forEach(medicoNaEscala => {
+          if (medicoNaEscala.medico.toString() === req.params.id) {
+            medicoNaEscalaInfo.push({
+              escalaId: escala._id,
+              dia: medicoNaEscala.dia,
+              turno: medicoNaEscala.turno,
+            })
+          }
+        })
+      })
+
+      return res.render('doctors/one', { medico, escalas, medicoNaEscalaInfo })
+    }
+    // Convertendo a string para ObjectId
+    const associatedDoctorId = new ObjectId(req.session.user.associatedDoctor)
+
+    // Verifica se associatedDoctorId ou medico._id são undefined
+    if (!associatedDoctorId || !medico._id || !associatedDoctorId.equals(medico._id)) {
+      const errorMessage = 'Erro ao buscar detalhes do médico'
+
+      return res.status(403).json({
+        error:
+          'Acesso não autorizado a este médico. Por favor faça login com o mesmo email do médico que tenta aceder ou com conta de administrador',
+      })
+    }
+
     const escalas = await Escala.find({ 'medicos.medico': medico._id })
     const medicoNaEscalaInfo = []
 
@@ -135,7 +202,7 @@ router.get('/:id', async (req, res) => {
 })
 
 //rota para aceder a pagina de update
-router.get('/:id/update', async (req, res) => {
+router.get('/:id/update', isLoggedIn, async (req, res) => {
   const medicoId = req.params.id
 
   try {
@@ -197,7 +264,7 @@ router.post('/:id/update', async (req, res) => {
 })
 
 //rota para eliminar médico
-router.get('/:id/delete', async (req, res) => {
+router.get('/:id/delete', isLoggedIn, async (req, res) => {
   try {
     const medico = await Doctor.findById(req.params.id)
     if (!medico) {

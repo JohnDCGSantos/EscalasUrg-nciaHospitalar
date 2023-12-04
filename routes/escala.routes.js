@@ -2,13 +2,15 @@ const express = require('express')
 const Doctor = require('../models/Doctor.model')
 const Escala = require('../models/Escala.model')
 const router = express.Router()
+const { isLoggedIn } = require('../middlewares/route-guard.middleware')
+const { isAdmin } = require('../middlewares/route-guard.middleware')
 
 const pdf = require('html-pdf')
 const path = require('path')
 const ejs = require('ejs')
 const cheerio = require('cheerio')
 // Rota para exibir o formulário de criação da escala
-router.get('/criar', async (req, res) => {
+router.get('/criar', isLoggedIn, async (req, res) => {
   try {
     // Consultar base de dados para obter a lista de médicos disponíveis
     const doctors = await Doctor.find()
@@ -34,8 +36,15 @@ router.post('/criar', async (req, res) => {
     console.log('Medicos Selecionados:', medicosSelecionados) // Visualizar a estrutura dos médicos
 
     if (!medicosSelecionados || medicosSelecionados.length < 14) {
-      return res.status(400).json({ error: 'Selecione pelo menos 14 médicos para criar a escala.' })
+      const errorMessage = 'Selecione pelo menos 14 médicos para criar a escala.'
+      const doctors = await Doctor.find()
+
+      return res.render('escalas/nova', {
+        errorMessage,
+        doctors,
+      })
     }
+
     const medicoIds = medicosSelecionados.map(medico => medico.split(':')[0])
 
     const diasDeFeriasPorMedico = {}
@@ -80,14 +89,6 @@ router.post('/criar', async (req, res) => {
     res.redirect('/escala')
   } catch (error) {
     console.error(error)
-    if (error.message.includes('Não há médicos suficientes para os turnos obrigatórios.')) {
-      res.status(400).json({
-        error:
-          'Não há médicos disponíveis para os turnos obrigatórios. Verifique as datas de férias dos médicos!! Certifique-se de que há mais médicos disponíveis para selecionar e tente novamente.',
-      })
-    } else {
-      res.status(500).json({ error: 'Erro ao gerar a escala' })
-    }
   }
 })
 
@@ -332,14 +333,14 @@ function shuffleArray(array) {
   }
   return array
 }
-router.get('/', async (req, res, next) => {
+router.get('/', isLoggedIn, async (req, res, next) => {
   const allEscalas = await Escala.find()
 
   res.render('escalas/all', { allEscalas })
 })
 
 //rota para aceder a escala
-router.get('/:escalaId', async (req, res) => {
+router.get('/:escalaId', isLoggedIn, async (req, res) => {
   try {
     const escala = await Escala.findById(req.params.escalaId)
 
@@ -354,7 +355,7 @@ router.get('/:escalaId', async (req, res) => {
 })
 
 //download pdf
-router.get('/:escalaId/pdf', async (req, res) => {
+router.get('/:escalaId/pdf', isLoggedIn, async (req, res) => {
   try {
     const escala = await Escala.findById(req.params.escalaId)
 
@@ -400,18 +401,16 @@ router.get('/:escalaId/pdf', async (req, res) => {
 })
 
 //rota para pagina delete da escala
-router.get('/:id/delete', async (req, res) => {
+router.get('/:id/delete', isAdmin, async (req, res) => {
   const escalaId = req.params.id
 
   try {
-    // Encontrar a escala pelo ID
     const escala = await Escala.findById(escalaId)
 
     if (!escala) {
       return res.status(404).send('Escala não encontrada')
     }
 
-    // Renderizar a página de confirmação de exclusão
     res.render('escalas/delete', { escala })
   } catch (err) {
     console.error(err)
@@ -427,7 +426,6 @@ router.post('/:id/delete', async (req, res) => {
     // Excluir a escala pelo ID
     await Escala.findByIdAndDelete(escalaId)
 
-    // Redirecionar para a lista de escalas ou qualquer outra página desejada
     res.redirect('/escala')
   } catch (err) {
     console.error(err)

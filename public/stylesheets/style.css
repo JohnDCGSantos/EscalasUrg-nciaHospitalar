@@ -29,11 +29,11 @@ body {
 }
 
 .back-image{
-  background-image: url('/images/back.jpg'); /* Substitua pelo caminho real da sua imagem */
+  background-image: url('/images/back.jpg'); 
   background-size: cover;
-  background-position: center center;
+  background-position: center ;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* Fixa o fundo durante a rolagem */
+  background-attachment: fixed; 
  
 
 }
@@ -360,9 +360,9 @@ a.addButton:hover {
 
 /*escala----------------------------------------------------------------*/
 #tabelaMedicos{
-  width: 90%;
+  width: 50%;
   margin:10px auto;
-  overflow-x: auto; /* Adicione esta propriedade para rolar horizontalmente em dispositivos móveis */
+  overflow-x: auto; 
 
 }
 .downloadPdf{
@@ -595,7 +595,7 @@ padding: 10px;
     }
 
     .link {
-      color: #3498db;
+      color: black;
       text-decoration: none;
     }
 
@@ -632,10 +632,10 @@ padding: 10px;
     }
 
     .calendario {
-      width: 90%;
+      width: 100%;
       height: 100%;;
       background-color: rgb(238, 238, 238,0.8);
-    margin-right: 10px ;
+    
     
     }
 
@@ -651,22 +651,23 @@ padding: 10px;
     }
 
     .calendarpos{
-      width: 100vw;
-      height: 100vh;
-      padding-bottom: 7rem;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: rgba(52, 152, 219,0.5);
       display: flex;
-      flex-direction:column ;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+
     }
 
     .calCont{
-      height: 100%;
-      width:90%;
-      display:flex;
-      flex-direction: column;
-      padding: 20px;
       background-color: rgba(52, 152, 219,0.5);
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     h3.histMed {
@@ -686,10 +687,132 @@ padding: 10px;
 
     .histCale {
  padding: 10px;
- margin-top: 70px;
+
     }
   
     .fc-event-time{
       display : none;
    }
+
+   input#email{
+    width: 100%
+   }
+  .warn{
+    background-color:rgba(255, 255, 255,0.8)
+  }
+
+
+
+  .wrapper {
+    max-width: 350px;
+    min-height: 500px;
+    margin: 80px auto;
+    padding: 40px 30px 30px 30px;
+    background-color: rgb(237, 240, 242,0.8);
+    border-radius: 15px;
+    box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #fff;
+}
+
+.logo {
+    width: 80px;
+    margin: auto;
+}
+
+.logo img {
   
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0px 0px 3px #5f5f5f,
+        0px 0px 0px 5px #ecf0f3,
+        8px 8px 15px #a7aaa7,
+        -8px -8px 15px #fff;
+}
+
+.wrapper .name {
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 1.3px;
+    padding-left: 10px;
+    color: #555;
+}
+
+.wrapper .form-field input {
+    width: 100%;
+    display: block;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 10px 15px 10px 10px;
+    /* border: 1px solid red; */
+}
+
+.wrapper .form-field {
+    padding-left: 10px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #fff;
+}
+
+.wrapper .form-field .fas {
+    color: #555;
+}
+
+.wrapper .btn {
+    box-shadow: none;
+    width: 100%;
+    height: 40px;
+    background-color: #03A9F4;
+    color: #fff;
+    border-radius: 25px;
+    box-shadow: 3px 3px 3px #b1b1b1,
+        -3px -3px 3px #fff;
+    letter-spacing: 1.3px;
+}
+
+.wrapper .btn:hover {
+    background-color: #039BE5;
+}
+
+.wrapper a {
+    text-decoration: none;
+    font-size: 0.8rem;
+    color: #03A9F4;
+}
+
+.wrapper a:hover {
+    color: #039BE5;
+}
+
+@media(max-width: 380px) {
+    .wrapper {
+        margin: 30px 20px;
+        padding: 40px 15px 15px 15px;
+    }
+}
+
+.quest{
+  margin-bottom: 0px;
+  font-size: 12px;
+}
+
+.out{
+  display: flex;
+  width:100%;
+  justify-content: flex-end;
+}
+
+a.nav-link{
+  color:black
+}
+.container-fluid {
+  background-color: rgba(245, 245, 245, 0.1) !important;
+}
+
+.navbar.bg-light.navbar-expand-lg {
+  background-color: rgba(245, 245, 245, 0.1) !important;
+}
+

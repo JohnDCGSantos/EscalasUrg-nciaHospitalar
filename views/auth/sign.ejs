@@ -1,0 +1,33 @@
+<div class="wrapper">
+  <div class="logo">
+    <img src="/images/2695.png" alt="">
+  </div>
+  <div class="text-center mt-4 name">
+    Gestão de Urgências
+  </div>
+  <form class="p-3 mt-3" action="/user/signup" method="POST">
+
+    <div class="form-field d-flex align-items-center">
+      <span class="far fa-user"></span>
+      <input type="text" name="username" id="userName" placeholder="Username" required autocomplete="username" /> <!-- Close the div properly -->
+    </div>
+    <div class="form-field d-flex align-items-center">
+      <span class="far fa-user"></span>
+      <input type="email" name="email" id="email" placeholder="Email" required autocomplete="email" value="<% if (typeof errorMessage !== 'undefined') { %>
+            <%= payload.email %>
+            <% } %>" />
+    </div>
+
+    <div class="form-field d-flex align-items-center">
+      <span class="fas fa-key"></span>
+      <input type="password" name="password" id="pwd" placeholder="Password" autocomplete="new-password" required>
+    </div>
+    <button class="btn mt-3" type="submit">Signup</button> <!-- Changed from "Login" to "Signup" -->
+    <% if (typeof errorMessage !== 'undefined') { %>
+    <p style="color: red; background-color: darkgrey;"><%= errorMessage %></p>
+    <% } %>
+  </form>
+  <div class="text-center fs-6">
+    <a href="/user/login">Login</a>
+  </div>
+</div>

@@ -9,6 +9,10 @@
       <input type="date" id="dataFim" name="dataFim" class="formInput" required>
 
       <h4 class="formTitle">Selecionar médicos:</h4>
+      <div> <% if (typeof errorMessage !== 'undefined') { %>
+        <p style="color: red; background-color: darkgrey;"><%= errorMessage %></p>
+        <% } %>
+      </div>
       <input type="text" id="searchBar" class="searchBar" placeholder="Pesquisar por nome" oninput="filterDoctors()">
 
       <ul class="checkboxList" id="doctorList">
@@ -24,9 +28,12 @@
 
       <a href="/doctors/adicionar" class="selectAllButton">Adicionar Novo Médico</a>
   </div>
+
   <div class="submitScale">
     <button type="submit" class="criarEscalaButton">Criar Escala</button>
   </div>
+
+
   </form>
   </div>
 </body>

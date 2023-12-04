@@ -8,6 +8,13 @@ const doctorSchema = new Schema(
       required: true,
       unique: true,
     },
+    email: {
+      type: String,
+      required: [true, 'Email is required.'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
     historicoFerias: [
       {
         dataInicio: {
