@@ -6,6 +6,7 @@
 - [Distribution Rules](#distribution-rules)
 - [Security](#security)
 - [Usage](#usage)
+- [Customization for Specific Requirements](#customization-for-specific-requirements)
 - [Contact](#contact)
 
 ## Description
@@ -81,6 +82,10 @@ Remember that hospital rules are automatically applied during roster generation.
 
 To get started, sign up and log in to the application.
 
+## Customization for Specific Requirements
+
+If your hospital has specific requirements not fully addressed by the default configuration of the application, feel free to get in touch. We are open to customizing the application to meet your specific needs.
+
 ## Contact
 
-For any inquiries or feedback, feel free to reach out to us at [jdcg.santos.com](mailto:jdcg.santos.com).
+For any inquiries or feedback, feel free to reach out to us at [jdcg.santos@gmail.com](mailto:jdcg.santos@gmail.com).
