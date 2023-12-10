@@ -6,6 +6,11 @@
       <input type="text" id="nome" name="nome" value="<%= medico.nome %>" required>
     </div>
 
+    <div class="emailDoc">
+      <label for="email">E-mail:</label>
+      <input type="email" id="email" name="email" value="<%= medico.email %>" required>
+    </div>
+
     <div id="ferias-container">
       <!-- Iterar sobre o histórico de férias -->
       <% for (let i = 0; i < medico.historicoFerias.length; i++) { %>
@@ -16,7 +21,7 @@
         <label class="docFormLabel">Data de Término de Férias:</label>
         <input type="date" name="historicoFerias[<%= i %>][dataFim]" value="<%= medico.historicoFerias[i].dataFim ? medico.historicoFerias[i].dataFim.toISOString().split('T')[0] : '' %>" class="docFormInput">
 
-        <button type="button" onclick="deleteFeriasInput(this) " class='RemoveScale'>Excluir</button>
+        <button type="button" onclick="deleteFeriasInput(this)" class='RemoveScale'>Excluir</button>
       </div>
       <% } %>
     </div>

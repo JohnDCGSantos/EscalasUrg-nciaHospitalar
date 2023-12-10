@@ -7,14 +7,16 @@
 
     function ordenarTabela(coluna) {
       const tabela = document.getElementById("tabelaMedicos");
-      const linhas = Array.from(tabela.getElementsByTagName("tr")).slice(1); // Ignora a primeira linha (cabeçalho)
+      const linhas = Array.from(tabela.getElementsByTagName("tr")).slice(1);
       const ordem = coluna === colunaAtual ? !ordemAscendente : true;
 
       linhas.sort((a, b) => {
         const valorA = a.getElementsByTagName("td")[coluna].innerText.trim();
         const valorB = b.getElementsByTagName("td")[coluna].innerText.trim();
 
-        if (coluna === 1) {
+        if (coluna === 0) {
+          return valorA.localeCompare(valorB) * (ordem ? 1 : -1);
+        } else if (coluna === 1) {
           const dataA = new Date(valorA);
           const dataB = new Date(valorB);
           return (dataA - dataB) * (ordem ? 1 : -1);
@@ -27,26 +29,21 @@
           const turnoA = mapeamentoTurno[valorA.trim()];
           const turnoB = mapeamentoTurno[valorB.trim()];
           return turnoA - turnoB || valorA.localeCompare(valorB) * (ordem ? 1 : -1);
-        } else {
-          return isNaN(valorA) ? valorA.localeCompare(valorB) * (ordem ? 1 : -1) : (valorA - valorB) * (ordem ? 1 : -1);
         }
       });
 
-      // Remova as linhas existentes da tabela
       linhas.forEach(linha => tabela.tBodies[0].appendChild(linha));
 
-      // Atualiza a coluna e a ordem atual
       colunaAtual = coluna;
       ordemAscendente = ordem;
 
-      // Atualiza as setas de ordenação
       atualizarSetasOrdenacao(coluna, ordem);
     }
 
     function atualizarSetasOrdenacao(coluna, ordem) {
       const ths = document.querySelectorAll('#tabelaMedicos th');
       ths.forEach((th, index) => {
-        th.innerHTML = th.innerHTML.replace(/▲| ▼/, ''); // Remove setas antigas
+        th.innerHTML = th.innerHTML.replace(/▲| ▼/, '');
         if (index === coluna) {
           const seta = ordem ? '▲ ' : '▼ ';
           th.innerHTML += seta;
@@ -54,16 +51,15 @@
       });
     }
 
-    // Adiciona as setas de ordenação no carregamento da página
     window.addEventListener('DOMContentLoaded', () => {
       const tabela = document.getElementById("tabelaMedicos");
-      const colunaInicial = 0; // Coluna inicial para a seta
+      const colunaInicial = 0;
       const ordemInicial = tabela.getAttribute("data-ordem") === "asc" ? 1 : -1;
       atualizarSetasOrdenacao(colunaInicial, ordemInicial);
       ordenarTabela(colunaInicial);
-
     });
   </script>
+
 </head>
 
 <body class="bodyScale">

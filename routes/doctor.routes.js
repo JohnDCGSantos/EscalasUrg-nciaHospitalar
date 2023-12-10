@@ -127,25 +127,18 @@ async function obterDiasTrabalhoDoMedico(medico) {
 
 //rota para aceder a um médico
 router.get('/:id', isLoggedIn, async (req, res) => {
-  let medico = null // Inicializa medico antes do bloco try
-
   try {
     if (!req.session.user) {
       return res.status(401).json({ error: 'Usuário não autenticado.' })
     }
 
-    medico = await Doctor.findById(req.params.id)
-    console.log('Medico Object:', medico)
+    const medico = await Doctor.findById(req.params.id)
 
-    // Verifica se medico ou associatedDoctorId são undefined
-    if (!medico || !req.session.user.associatedDoctor) {
-      return res.status(403).json({
-        error:
-          'Acesso não autorizado a este médico. Por favor faça login com o mesmo email do médico que tenta aceder ou com conta de administrador',
-      })
+    if (!medico) {
+      return res.status(404).json({ error: 'Médico não encontrado.' })
     }
-    if (req.session.user.role === 'admin') {
-      // Se for um administrador, permita o acesso a qualquer médico
+
+    if (req.session.user.role === 'admin' || req.session.user.email === medico.email) {
       const escalas = await Escala.find({ 'medicos.medico': medico._id })
       const medicoNaEscalaInfo = []
 
@@ -163,38 +156,30 @@ router.get('/:id', isLoggedIn, async (req, res) => {
 
       return res.render('doctors/one', { medico, escalas, medicoNaEscalaInfo })
     }
-    // Convertendo a string para ObjectId
-    const associatedDoctorId = new ObjectId(req.session.user.associatedDoctor)
 
-    // Verifica se associatedDoctorId ou medico._id são undefined
-    if (!associatedDoctorId || !medico._id || !associatedDoctorId.equals(medico._id)) {
-      const errorMessage = 'Erro ao buscar detalhes do médico'
+    if (req.session.user.role === 'admin') {
+      // Se for um administrador, permita o acesso
+      const escalas = await Escala.find({ 'medicos.medico': medico._id })
+      const medicoNaEscalaInfo = []
 
-      return res.status(403).json({
-        error:
-          'Acesso não autorizado a este médico. Por favor faça login com o mesmo email do médico que tenta aceder ou com conta de administrador',
+      escalas.forEach(escala => {
+        escala.medicos.forEach(medicoNaEscala => {
+          if (medicoNaEscala.medico.toString() === req.params.id) {
+            medicoNaEscalaInfo.push({
+              escalaId: escala._id,
+              dia: medicoNaEscala.dia,
+              turno: medicoNaEscala.turno,
+            })
+          }
+        })
       })
+
+      return res.render('doctors/one', { medico, escalas, medicoNaEscalaInfo })
     }
 
-    const escalas = await Escala.find({ 'medicos.medico': medico._id })
-    const medicoNaEscalaInfo = []
-
-    console.log(escalas)
-
-    escalas.forEach(escala => {
-      escala.medicos.forEach(medicoNaEscala => {
-        if (medicoNaEscala.medico.toString() === req.params.id) {
-          medicoNaEscalaInfo.push({
-            escalaId: escala._id,
-            dia: medicoNaEscala.dia,
-            turno: medicoNaEscala.turno,
-          })
-          console.log(medicoNaEscalaInfo)
-        }
-      })
+    return res.status(403).json({
+      error: 'Acesso não autorizado a este médico. Faça login com as credenciais corretas.',
     })
-
-    res.render('doctors/one', { medico, escalas, medicoNaEscalaInfo })
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Erro ao buscar detalhes do médico' })
@@ -207,24 +192,40 @@ router.get('/:id/update', isLoggedIn, async (req, res) => {
 
   try {
     const medicoToUpdate = await Doctor.findById(medicoId)
-    console.log(medicoToUpdate)
+
+    if (
+      !req.session.user ||
+      (req.session.user.role !== 'admin' && req.session.user.email !== medicoToUpdate.email)
+    ) {
+      return res.status(403).json({
+        error: 'Acesso não autorizado a este médico. Faça login com as credenciais corretas.',
+      })
+    }
+
     res.render('doctors/updateDoc', { medico: medicoToUpdate })
   } catch (error) {
     console.error('Erro ao encontrar médico:', error)
     res.status(500).send('Erro ao encontrar médico.')
   }
 })
-// rota para processar update
+
+// Rota para processar a atualização
 router.post('/:id/update', async (req, res) => {
   const medicoId = req.params.id
-  const { nome, feriasCount, ...historicoFerias } = req.body
-
-  console.log('Received Update Request:', req.body)
-  console.log('ID do Médico:', medicoId)
-  console.log('Nome:', nome)
-  console.log('Histórico de Férias:', historicoFerias)
+  const { nome, email, feriasCount, ...historicoFerias } = req.body
 
   try {
+    const medicoToUpdate = await Doctor.findById(medicoId)
+
+    if (
+      !req.session.user ||
+      (req.session.user.role !== 'admin' && req.session.user.email !== medicoToUpdate.email)
+    ) {
+      return res.status(403).json({
+        error: 'Acesso não autorizado a este médico. Faça login com as credenciais corretas.',
+      })
+    }
+
     // Parse dates and validate
     const formattedFerias = []
     for (let i = 0; i < feriasCount; i++) {
@@ -238,7 +239,6 @@ router.post('/:id/update', async (req, res) => {
       }
 
       formattedFerias.push({
-        // _id: new ObjectId(historicoFerias[`historicoFerias[${i}][_id]`]),
         dataInicio,
         dataFim,
       })
@@ -249,10 +249,14 @@ router.post('/:id/update', async (req, res) => {
       medicoId,
       {
         nome,
+        email,
         historicoFerias: formattedFerias,
       },
       { new: true }
     )
+
+    req.session.user.associatedDoctor = updatedDoc._id.toString()
+
     const diasDeFerias = await obterDiasFerias(updatedDoc)
     updatedDoc.diasDeFerias = diasDeFerias
     await updatedDoc.save()
@@ -263,6 +267,86 @@ router.post('/:id/update', async (req, res) => {
   }
 })
 
+//rota para aceder a pagina de update
+router.get('/:id/update', isLoggedIn, async (req, res) => {
+  const medicoId = req.params.id
+
+  try {
+    const medicoToUpdate = await Doctor.findById(medicoId)
+
+    if (
+      !req.session.user ||
+      (req.session.user.role !== 'admin' && req.session.user.email !== medicoToUpdate.email)
+    ) {
+      return res.status(403).json({
+        error: 'Acesso não autorizado a este médico. Faça login com as credenciais corretas.',
+      })
+    }
+
+    res.render('doctors/updateDoc', { medico: medicoToUpdate })
+  } catch (error) {
+    console.error('Erro ao encontrar médico:', error)
+    res.status(500).send('Erro ao encontrar médico.')
+  }
+})
+
+// Rota para processar a atualização
+router.post('/:id/update', async (req, res) => {
+  const medicoId = req.params.id
+  const { nome, email, feriasCount, ...historicoFerias } = req.body
+
+  try {
+    const medicoToUpdate = await Doctor.findById(medicoId)
+
+    if (
+      !req.session.user ||
+      (req.session.user.role !== 'admin' && req.session.user.email !== medicoToUpdate.email)
+    ) {
+      return res.status(403).json({
+        error: 'Acesso não autorizado a este médico. Faça login com as credenciais corretas.',
+      })
+    }
+
+    // Parse dates and validate
+    const formattedFerias = []
+    for (let i = 0; i < feriasCount; i++) {
+      const dataInicio = new Date(historicoFerias[`historicoFerias[${i}][dataInicio]`])
+      const dataFim = new Date(historicoFerias[`historicoFerias[${i}][dataFim]`])
+
+      // Perform additional validation
+      if (isNaN(dataInicio) || isNaN(dataFim) || dataInicio > dataFim) {
+        console.error('Invalid date range for vacation entry:', i)
+        continue
+      }
+
+      formattedFerias.push({
+        dataInicio,
+        dataFim,
+      })
+    }
+
+    // Update the document in the database
+    const updatedDoc = await Doctor.findByIdAndUpdate(
+      medicoId,
+      {
+        nome,
+        email,
+        historicoFerias: formattedFerias,
+      },
+      { new: true }
+    )
+
+    req.session.user.associatedDoctor = updatedDoc._id.toString()
+
+    const diasDeFerias = await obterDiasFerias(updatedDoc)
+    updatedDoc.diasDeFerias = diasDeFerias
+    await updatedDoc.save()
+    res.redirect('/')
+  } catch (err) {
+    console.error(err)
+    res.status(500).send('Erro ao atualizar médico.')
+  }
+})
 //rota para eliminar médico
 router.get('/:id/delete', isLoggedIn, async (req, res) => {
   try {

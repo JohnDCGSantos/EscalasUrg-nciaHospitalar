@@ -11,17 +11,24 @@
       <h4 class="formTitle">Selecionar médicos:</h4>
       <div> <% if (typeof errorMessage !== 'undefined') { %>
         <p style="color: red; background-color: darkgrey;"><%= errorMessage %></p>
+        <button onclick="window.history.back()">Voltar </button>
+
         <% } %>
       </div>
       <input type="text" id="searchBar" class="searchBar" placeholder="Pesquisar por nome" oninput="filterDoctors()">
 
       <ul class="checkboxList" id="doctorList">
+        <% if (typeof doctors !== 'undefined' && doctors.length > 0) { %>
+
         <% doctors.forEach((doctor) => { %>
         <li class="checkboxItem">
           <input type="checkbox" name="medicos" value="<%= doctor._id %>:<%= doctor.nome %>" id="medico<%= doctor._id %>">
           <label for="medico<%= doctor._id %>" class="checkboxLabel"><%= doctor.nome %></label>
         </li>
         <% }); %>
+        <% } else { %>
+        <p>Nenhum médico disponível.</p>
+        <% } %>
       </ul>
 
       <button type="button" class="selectAllButton" onclick="selectAllDoctors()">Selecionar Todos</button>
